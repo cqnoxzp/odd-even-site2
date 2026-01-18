@@ -20,9 +20,11 @@ body {
   max-width: 420px;
 }
 
-/* 상단 배너 */
+/* 상단 배너 (움직이는 그라데이션) */
 .header {
-  background: linear-gradient(90deg, #ff004c, #ff9900, #ff004c);
+  background: linear-gradient(270deg, #ff004c, #ff9900, #ff004c);
+  background-size: 600% 600%;
+  animation: gradientMove 6s ease infinite;
   text-align: center;
   padding: 16px;
   font-weight: 900;
@@ -30,29 +32,59 @@ body {
   font-size: 16px;
 }
 
-/* 🔥 가짜 당첨 배너 (클릭 방해 제거 핵심) */
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* 가짜 당첨 배너 */
 .fake-win {
   background: #111;
   text-align: center;
   font-size: 13px;
   padding: 8px;
   color: #ffcc00;
-  pointer-events: none; /* ⭐ 이게 핵심 */
+  pointer-events: none;
 }
 
 /* 잔액 */
 .balance {
   text-align: center;
-  margin: 16px 0;
+  margin: 14px 0;
   font-size: 18px;
   font-weight: bold;
 }
 
-/* 공통 입력/버튼 */
+/* 탭 */
+.tabs {
+  display: flex;
+}
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 14px;
+  background: #111;
+  border-bottom: 2px solid #111;
+  font-weight: bold;
+}
+.tab.active {
+  border-bottom: 2px solid #ff004c;
+  color: #ff004c;
+}
+
+/* 공통 */
+.screen {
+  display: none;
+  padding: 16px;
+}
+.screen.active {
+  display: block;
+}
+
 input, .btn {
   width: 100%;
-  padding: 16px;
-  margin-top: 14px;
+  height: 54px;
   font-size: 16px;
   border-radius: 8px;
 }
@@ -61,16 +93,18 @@ input {
   background: #111;
   color: #fff;
   border: 1px solid #333;
+  padding: 0 14px;
 }
 
 .btn {
+  margin-top: 14px;
   background: #ff004c;
   border: none;
   font-weight: 800;
   color: #fff;
 }
 
-/* 홀짝 버튼 */
+/* 홀짝 선택 */
 .choice {
   display: flex;
   gap: 12px;
@@ -78,7 +112,7 @@ input {
 }
 .choice button {
   flex: 1;
-  padding: 16px;
+  height: 54px;
   font-size: 17px;
   font-weight: 800;
   background: #111;
@@ -87,6 +121,25 @@ input {
   border-radius: 8px;
 }
 .choice button.active {
+  background: #ff004c;
+}
+
+/* 사다리 선택 */
+.ladder-pick {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-top: 14px;
+}
+.ladder-pick button {
+  height: 54px;
+  background: #111;
+  border: 1px solid #555;
+  border-radius: 8px;
+  font-weight: bold;
+  color: #fff;
+}
+.ladder-pick button.active {
   background: #ff004c;
 }
 
@@ -159,22 +212,33 @@ input {
   <div class="balance">보유 금액: <span id="money">0</span>P</div>
 
   <!-- 초기 자금 -->
-  <div id="setup">
+  <div id="setup" class="screen active">
     <input id="startMoney" type="number" placeholder="보유 포인트 입력">
     <button class="btn" onclick="setMoney()">게임 시작</button>
   </div>
 
-  <!-- 게임 -->
-  <div id="game" style="display:none">
-    <input id="bet" type="number" placeholder="배팅 금액">
+  <!-- 탭 -->
+  <div class="tabs">
+    <div class="tab active" onclick="switchGame('odd', this)">홀짝</div>
+    <div class="tab" onclick="switchGame('ladder', this)">사다리</div>
+  </div>
 
+  <!-- 홀짝 -->
+  <div id="odd" class="screen active">
+    <input id="betOE" type="number" placeholder="배팅 금액">
     <div class="choice">
-      <button onclick="pick('홀', this)">홀</button>
-      <button onclick="pick('짝', this)">짝</button>
+      <button onclick="pickOE('홀', this)">홀</button>
+      <button onclick="pickOE('짝', this)">짝</button>
     </div>
-
-    <button class="btn" onclick="play()">PLAY</button>
+    <button class="btn" onclick="playOdd()">PLAY</button>
     <div class="streak" id="streak">연승: 0</div>
+  </div>
+
+  <!-- 사다리 -->
+  <div id="ladder" class="screen">
+    <input id="betL" type="number" placeholder="배팅 금액">
+    <div class="ladder-pick" id="ladderPick"></div>
+    <button class="btn" onclick="playLadder()">PLAY</button>
   </div>
 
   <div class="log" id="log"></div>
@@ -182,7 +246,8 @@ input {
 
 <script>
 let money = 0;
-let choice = null;
+let oeChoice = null;
+let ladderChoice = null;
 let streak = 0;
 
 const names = ['김**','이**','박**','최**','정**'];
@@ -197,37 +262,55 @@ function setMoney() {
   money = v;
   moneyEl.innerText = money;
   setup.style.display = "none";
-  game.style.display = "block";
 }
 
-function pick(v, el) {
-  choice = v;
+function switchGame(id, el) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function pickOE(v, el) {
+  oeChoice = v;
   document.querySelectorAll('.choice button').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
 }
 
-function play() {
-  const betV = Number(bet.value);
-  if (!choice) return alert("홀/짝 선택");
-  if (betV <= 0 || betV > money) return alert("배팅 금액 오류");
+function playOdd() {
+  const bet = Number(betOE.value);
+  if (!oeChoice) return alert("홀/짝 선택");
+  if (bet <= 0 || bet > money) return alert("배팅 금액 오류");
 
   const answer = Math.random() < 0.5 ? '홀' : '짝';
-
-  let logText = `정답: ${answer} / 선택: ${choice}`;
-
-  if (choice === answer) {
-    money += betV;
+  if (oeChoice === answer) {
+    money += bet;
     streak++;
-    logText += ` → 승리 (+${betV})`;
+    addLog(`홀짝 정답 ${answer} → 승리 +${bet}`);
   } else {
-    money -= betV;
+    money -= bet;
     streak = 0;
-    logText += ` → 패배 (-${betV})`;
+    addLog(`홀짝 정답 ${answer} → 패배 -${bet}`);
   }
-
   moneyEl.innerText = money;
   streakEl.innerText = `연승: ${streak}`;
-  log.innerHTML = `<div>${logText}</div>` + log.innerHTML;
+}
+
+function playLadder() {
+  const bet = Number(betL.value);
+  if (!ladderChoice) return alert("번호 선택");
+  if (bet <= 0 || bet > money) return alert("배팅 금액 오류");
+
+  const rank = Math.floor(Math.random() * 5);
+  const multi = [3,2,0,-1,-2][rank];
+  const r = bet * multi;
+  money += r;
+  moneyEl.innerText = money;
+  addLog(`사다리 ${ladderChoice}번 → ${rank+1}등 (${r}P)`);
+}
+
+function addLog(t) {
+  log.innerHTML = `<div>${t}</div>` + log.innerHTML;
 }
 
 setInterval(() => {
@@ -235,6 +318,18 @@ setInterval(() => {
   const amt = (Math.floor(Math.random() * 40) + 10) * 1000;
   fakeWin.innerText = `${name}님이 ${amt}P 획득`;
 }, 7000);
+
+/* 사다리 버튼 생성 */
+for (let i = 1; i <= 5; i++) {
+  const b = document.createElement("button");
+  b.innerText = i;
+  b.onclick = () => {
+    ladderChoice = i;
+    document.querySelectorAll('.ladder-pick button').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+  };
+  ladderPick.appendChild(b);
+}
 
 const moneyEl = document.getElementById("money");
 const log = document.getElementById("log");
