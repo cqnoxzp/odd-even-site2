@@ -2,264 +2,386 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>포인트 카지노</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>BLACK CASINO</title>
 
 <style>
 body {
   margin: 0;
-  background: #000;
+  background: #0b0b0b;
   color: #fff;
-  font-family: Arial, sans-serif;
-}
-
-.container {
-  max-width: 420px;
-  margin: auto;
-  padding: 12px;
-  padding-bottom: 70px;
-}
-
-h2 {
-  margin: 10px 0;
-  font-size: 18px;
-}
-
-.row {
+  font-family: Pretendard, system-ui, sans-serif;
   display: flex;
-  gap: 6px;
+  justify-content: center;
+}
+.app { width: 100%; max-width: 420px; }
+
+/* 헤더 */
+.header {
+  background: linear-gradient(270deg, #ff004c, #ff9900, #ff004c);
+  background-size: 600% 600%;
+  animation: gradientMove 6s ease infinite;
+  text-align: center;
+  padding: 16px;
+  font-weight: 900;
+  letter-spacing: 3px;
+}
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
+.fake-win {
+  background: #111;
+  text-align: center;
+  font-size: 13px;
+  padding: 8px;
+  color: #ffcc00;
+}
+
+.balance {
+  text-align: center;
+  margin: 14px 0;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* 탭 */
+.tabs { display: none; }
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 14px;
+  background: #111;
+  font-weight: bold;
+}
+.tab.active {
+  color: #ff004c;
+  border-bottom: 2px solid #ff004c;
+}
+
+/* 화면 */
+.screen { display: none; padding: 16px; }
+.screen.active { display: block; }
+
+/* 입력 */
 input, button {
-  height: 40px;
-  border-radius: 4px;
-  border: none;
-  font-size: 14px;
+  height: 54px;
+  font-size: 16px;
+  border-radius: 8px;
 }
-
 input {
-  flex: 1;
-  padding: 0 10px;
-}
-
-button {
-  background: #222;
+  background: #111;
   color: #fff;
+  border: 1px solid #333;
+  padding: 0 14px;
+}
+.btn {
+  margin-top: 14px;
+  background: #ff004c;
+  border: none;
+  font-weight: 800;
+  color: #fff;
+  width: 100%;
+}
+
+/* 배팅 라인 */
+.bet-line {
+  display: flex;
+  gap: 8px;
+}
+.bet-input { width: 70%; }
+.max-btn {
+  width: 30%;
+  background: #111;
+  border: 1px solid #ff004c;
+  color: #ff004c;
+  font-weight: bold;
+}
+
+/* 홀짝 */
+.choice {
+  display: flex;
+  gap: 12px;
+  margin-top: 14px;
+}
+.choice button {
   flex: 1;
-  cursor: pointer;
+  background: #111;
+  border: 1px solid #ff004c;
+  color: #fff;
 }
+.choice button.active { background: #ff004c; }
 
-button:hover {
-  background: #333;
+/* 사다리 */
+.ladder-pick {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-top: 14px;
 }
+.ladder-pick button {
+  background: #111;
+  border: 1px solid #555;
+  color: #fff;
+}
+.ladder-pick button.active { background: #ff004c; }
 
-button.max {
-  flex: 0.6;
-  background: #444;
+/* 슬롯 */
+.slots {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin: 16px 0;
+}
+.slot {
+  background: #111;
+  border: 2px solid #333;
+  height: 64px;
+  font-size: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.spinning {
+  animation: spin 0.15s infinite linear;
+}
+@keyframes spin {
+  from { transform: translateY(-10px); }
+  to { transform: translateY(10px); }
 }
 
 /* 로그 */
-.log-box {
+.log {
+  margin: 16px;
   background: #111;
-  border: 1px solid #222;
-  padding: 6px;
-  height: 150px;
+  padding: 12px;
+  max-height: 180px;
   overflow-y: auto;
   font-size: 13px;
 }
-
-.log-win { color: #3cff00; }
-.log-lose { color: #ff4444; }
-.log-neutral { color: #aaa; }
-
-/* 슬롯 */
-.slot {
-  display: flex;
-  justify-content: space-between;
-  margin: 10px 0;
-}
-
-.reel {
-  width: 18%;
-  height: 50px;
-  background: #111;
-  border: 1px solid #333;
-  text-align: center;
-  font-size: 24px;
-  line-height: 50px;
-}
+.log div { margin-bottom: 6px; }
 
 /* 하단 배너 */
 .footer-banner {
   position: fixed;
   bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
   width: 100%;
   max-width: 420px;
-  height: 44px;
-  background: #111;
+  background: #0d0d0d;
   border-top: 1px solid #222;
+  font-size: 12px;
+  color: #ff5555;
   overflow: hidden;
-  z-index: 99;
 }
-
-.banner-track {
-  display: flex;
-  height: 100%;
-  transition: transform 0.6s ease;
+.footer-banner div {
+  white-space: nowrap;
+  padding: 8px 12px;
+  animation: scroll 18s linear infinite;
 }
-
-.banner-item {
-  min-width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  color: #ffcc00;
+@keyframes scroll {
+  from { transform: translateX(100%); }
+  to { transform: translateX(-100%); }
 }
 </style>
 </head>
 
 <body>
-<div class="container">
 
-<h2>보유 포인트</h2>
-<div class="row">
-  <input type="number" id="pointsInput" placeholder="보유 포인트 입력" />
-  <button onclick="setPoints()">확정</button>
-</div>
+<div class="app">
+  <div class="header">🔥 BLACK CASINO 🔥</div>
+  <div class="fake-win" id="fakeWin"></div>
+  <div class="balance">보유 금액: <span id="money">0</span>P</div>
 
-<h2>배팅</h2>
-<div class="row">
-  <input type="number" id="betInput" placeholder="배팅 포인트" />
-  <button class="max" onclick="setMax()">MAX</button>
-</div>
-
-<h2>홀 / 짝</h2>
-<div class="row">
-  <button onclick="playOddEven('홀')">홀</button>
-  <button onclick="playOddEven('짝')">짝</button>
-</div>
-
-<h2>사다리</h2>
-<div class="row">
-  <button onclick="playLadder()">시작</button>
-</div>
-
-<h2>슬롯머신</h2>
-<div class="slot">
-  <div class="reel" id="r1">-</div>
-  <div class="reel" id="r2">-</div>
-  <div class="reel" id="r3">-</div>
-  <div class="reel" id="r4">-</div>
-  <div class="reel" id="r5">-</div>
-</div>
-<button onclick="playSlot()">슬롯 돌리기</button>
-
-<h2>결과 로그</h2>
-<div class="log-box" id="logBox"></div>
-
-</div>
-
-<!-- 하단 배너 -->
-<div class="footer-banner">
-  <div class="banner-track" id="bannerTrack">
-    <div class="banner-item">⚠ 본 사이트는 기록을 저장하지 않습니다</div>
-    <div class="banner-item">⛔ 시스템 판정에 대한 이의 제기 불가</div>
-    <div class="banner-item">💸 적중 시 즉시 반영 · 미적중 책임 없음</div>
-    <div class="banner-item">🔥 고배당 구간 진입 중</div>
-    <div class="banner-item">🔒 외부 유출 시 모든 책임은 사용자 본인</div>
+  <div id="setup" class="screen active">
+    <div class="bet-line">
+      <input id="startMoney" class="bet-input" type="number" placeholder="보유 포인트 입력">
+      <button class="max-btn" onclick="setMoney()">START</button>
+    </div>
   </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchGame('odd', this)">홀짝</div>
+    <div class="tab" onclick="switchGame('ladder', this)">사다리</div>
+    <div class="tab" onclick="switchGame('slot', this)">슬롯</div>
+  </div>
+
+  <!-- 홀짝 -->
+  <div id="odd" class="screen">
+    <div class="bet-line">
+      <input id="betOE" class="bet-input" type="number" placeholder="배팅 금액">
+      <button class="max-btn" onclick="betOE.value = money">MAX</button>
+    </div>
+    <div class="choice">
+      <button onclick="pickOE('홀', this)">홀</button>
+      <button onclick="pickOE('짝', this)">짝</button>
+    </div>
+    <button class="btn" onclick="playOdd()">PLAY</button>
+  </div>
+
+  <!-- 사다리 -->
+  <div id="ladder" class="screen">
+    <div class="bet-line">
+      <input id="betL" class="bet-input" type="number" placeholder="배팅 금액">
+      <button class="max-btn" onclick="betL.value = money">MAX</button>
+    </div>
+    <div class="ladder-pick" id="ladderPick"></div>
+    <button class="btn" onclick="playLadder()">PLAY</button>
+  </div>
+
+  <!-- 슬롯 -->
+  <div id="slot" class="screen">
+    <div class="bet-line">
+      <input id="betS" class="bet-input" type="number" placeholder="배팅 금액">
+      <button class="max-btn" onclick="betS.value = money">MAX</button>
+    </div>
+    <div class="slots" id="slots"></div>
+    <button class="btn" onclick="playSlot()">SPIN</button>
+  </div>
+
+  <div class="log" id="log"></div>
+</div>
+
+<div class="footer-banner">
+  <div>⚠ 시스템 판정 결과에 이의 제기 불가 · 미적중 책임 없음 · 고배당 구간 주의</div>
 </div>
 
 <script>
-let points = 0;
+let money = 0, oeChoice = null, ladderChoice = null;
+const symbols = ['🍒','🍋','🔔','⭐','💎'];
+const names = ['김**','이**','박**','최**','정**'];
 
-/* 배너 */
-let bannerIndex = 0;
-const bannerTrack = document.getElementById("bannerTrack");
-setInterval(() => {
-  bannerIndex = (bannerIndex + 1) % bannerTrack.children.length;
-  bannerTrack.style.transform = `translateX(-${bannerIndex * 100}%)`;
-}, 4000);
+const moneyEl = document.getElementById("money");
+const log = document.getElementById("log");
+const ladderPick = document.getElementById("ladderPick");
+const slotsEl = document.getElementById("slots");
 
-/* 공통 */
-function addLog(text, type) {
-  const div = document.createElement("div");
-  div.className = type;
-  div.innerText = text;
-  document.getElementById("logBox").prepend(div);
+/* 시작 */
+function setMoney() {
+  const v = Number(startMoney.value);
+  if (v <= 0) return alert("금액 입력");
+  money = v;
+  moneyEl.innerText = money;
+  setup.style.display = "none";
+  document.querySelector(".tabs").style.display = "flex";
+  odd.classList.add("active");
 }
 
-function setPoints() {
-  points = Number(pointsInput.value);
-  addLog(`💰 포인트 설정: ${points}P`, "log-neutral");
-}
-
-function setMax() {
-  betInput.value = points;
+/* 탭 */
+function switchGame(id, el) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
 }
 
 /* 홀짝 */
-function playOddEven(choice) {
-  const bet = Number(betInput.value);
-  if (bet <= 0 || bet > points) return;
-
-  const result = Math.random() < 0.5 ? "홀" : "짝";
-  let diff = choice === result ? bet : -bet;
-
-  points += diff;
-
-  addLog(
-    `${choice === result ? "🟢" : "🔴"} 홀짝 ${choice} / 결과 ${result} | ${diff > 0 ? "+" : ""}${diff}P`,
-    diff > 0 ? "log-win" : "log-lose"
-  );
+function pickOE(v, el) {
+  oeChoice = v;
+  document.querySelectorAll('.choice button').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+function playOdd() {
+  const bet = Number(betOE.value);
+  if (!oeChoice || bet <= 0 || bet > money) return alert("배팅 오류");
+  const ans = Math.random() < 0.5 ? '홀' : '짝';
+  const win = oeChoice === ans;
+  money += win ? bet : -bet;
+  moneyEl.innerText = money;
+  addLog(`홀짝 ${ans} → ${win ? `적중 +${bet}` : `실패 -${bet}`}P`);
 }
 
-/* 사다리 */
+/* 사다리 버튼 */
+for (let i = 1; i <= 5; i++) {
+  const b = document.createElement("button");
+  b.innerText = i;
+  b.onclick = () => {
+    ladderChoice = i;
+    document.querySelectorAll('.ladder-pick button').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+  };
+  ladderPick.appendChild(b);
+}
+
+/* 🔥 사다리 확률 조작 */
+function getLadderRank() {
+  const r = Math.random() * 100;
+  if (r < 5) return 1;        // 5%
+  if (r < 15) return 2;       // 10%
+  if (r < 35) return 3;       // 20%
+  if (r < 60) return 4;       // 25%
+  return 5;                   // 40%
+}
+
 function playLadder() {
-  const bet = Number(betInput.value);
-  if (bet <= 0 || bet > points) return;
+  const bet = Number(betL.value);
+  if (!ladderChoice || bet <= 0 || bet > money) return alert("배팅 오류");
 
-  const rank = Math.floor(Math.random() * 5) + 1;
-  const multipliers = {1:2, 2:1, 3:0, 4:-1, 5:-2};
-  const diff = bet * multipliers[rank];
-  points += diff;
+  const rank = getLadderRank();
+  const multi = {1:2,2:1,3:0,4:-1,5:-2}[rank];
+  const diff = bet * multi;
 
-  addLog(
-    `${multipliers[rank] > 0 ? "🟢" : multipliers[rank] === 0 ? "⚪" : "🔴"} 사다리 ${rank}등 | ${diff > 0 ? "+" : ""}${diff}P`,
-    multipliers[rank] > 0 ? "log-win" : multipliers[rank] === 0 ? "log-neutral" : "log-lose"
-  );
+  money += diff;
+  moneyEl.innerText = money;
+  addLog(`사다리 ${rank}등 → ${diff >= 0 ? '+' : ''}${diff}P`);
 }
 
 /* 슬롯 */
+for (let i = 0; i < 5; i++) {
+  const d = document.createElement("div");
+  d.className = "slot";
+  d.innerText = "❔";
+  slotsEl.appendChild(d);
+}
 function playSlot() {
-  const bet = Number(betInput.value);
-  if (bet <= 0 || bet > points) return;
+  const bet = Number(betS.value);
+  if (bet <= 0 || bet > money) return alert("배팅 오류");
 
-  const reels = [r1,r2,r3,r4,r5];
-  let spins = 0;
+  const slotEls = document.querySelectorAll('.slot');
+  slotEls.forEach(s => s.classList.add("spinning"));
 
-  const interval = setInterval(() => {
-    reels.forEach(r => r.innerText = Math.floor(Math.random() * 7));
-    spins++;
-    if (spins > 15) {
-      clearInterval(interval);
-
-      const values = reels.map(r => r.innerText);
-      const allSame = values.every(v => v === values[0]);
-      let diff = allSame ? bet * 4 : -bet;
-
-      points += diff;
-
-      addLog(
-        `${allSame ? "🎰🟢 슬롯 적중" : "🎰🔴 슬롯 실패"} | ${diff > 0 ? "+" : ""}${diff}P`,
-        allSame ? "log-win" : "log-lose"
-      );
+  let c = 0;
+  const spin = setInterval(() => {
+    slotEls.forEach(s => {
+      s.innerText = symbols[Math.floor(Math.random()*symbols.length)];
+    });
+    if (++c > 12) {
+      clearInterval(spin);
+      slotEls.forEach(s => s.classList.remove("spinning"));
+      settleSlot(bet);
     }
   }, 80);
 }
+function settleSlot(bet) {
+  const result = [...document.querySelectorAll('.slot')].map(s => s.innerText);
+  const cnt = {};
+  result.forEach(x => cnt[x] = (cnt[x]||0)+1);
+  const max = Math.max(...Object.values(cnt));
+
+  let multi = -1;
+  if (max === 5) multi = 4;
+  else if (max === 4) multi = 2;
+  else if (max === 3) multi = 1;
+
+  const diff = bet * multi;
+  money += diff;
+  moneyEl.innerText = money;
+  addLog(`슬롯 x${multi} → ${diff >= 0 ? '+' : ''}${diff}P`);
+}
+
+/* 로그 */
+function addLog(t) {
+  log.innerHTML = `<div>${t}</div>` + log.innerHTML;
+}
+
+/* 가짜 당첨 */
+setInterval(() => {
+  const name = names[Math.floor(Math.random()*names.length)];
+  const amt = (Math.floor(Math.random()*40)+10)*1000;
+  fakeWin.innerText = `${name}님이 ${amt}P 획득`;
+}, 7000);
 </script>
+
 </body>
 </html>
