@@ -17,7 +17,7 @@ body {
 }
 
 .app {
-  width: 360px;
+  width: 380px;
   background: rgba(255,255,255,0.08);
   backdrop-filter: blur(12px);
   border-radius: 22px;
@@ -33,6 +33,7 @@ input {
   margin-bottom: 12px;
   border-radius: 10px;
   border: none;
+  font-size: 16px;
 }
 
 .buttons {
@@ -59,6 +60,8 @@ button {
   padding: 10px 14px;
   border-radius: 50px;
   background: gold;
+  color: #000;
+  font-weight: bold;
 }
 
 .ladder {
@@ -116,8 +119,13 @@ button {
     <button onclick="addBet(100)">100</button>
     <button onclick="addBet(500)">500</button>
     <button onclick="addBet(1000)">1000</button>
+    <button onclick="addBet(5000)">5000</button>
   </div>
-  <p>배팅 금액: <span id="bet">0</span></p>
+
+  <input id="customBet" type="number" placeholder="자유 배팅 금액">
+  <button onclick="setCustomBet()">배팅 적용</button>
+
+  <p>현재 배팅: <span id="bet">0</span></p>
 
   <!-- 홀짝 -->
   <div id="oddArea" class="hidden">
@@ -166,7 +174,7 @@ function selectGame(game) {
 
   player = { name, money, game };
   bet = 0;
-  document.getElementById("bet").innerText = bet;
+  updateBet();
 
   main.classList.add("hidden");
   gameDiv.classList.remove("hidden");
@@ -183,15 +191,30 @@ function selectGame(game) {
 }
 
 function addBet(amount) {
-  if (bet + amount > player.money) return;
+  if (bet + amount > player.money) {
+    alert("보유 금액 초과");
+    return;
+  }
   bet += amount;
-  document.getElementById("bet").innerText = bet;
+  updateBet();
+}
+
+function setCustomBet() {
+  const value = Number(customBet.value);
+  if (value <= 0 || value > player.money) {
+    alert("올바른 배팅 금액 입력");
+    return;
+  }
+  bet = value;
+  updateBet();
 }
 
 function playOddEven(choice) {
   if (bet <= 0) return alert("배팅하세요");
+
   const r = Math.random() < 0.5 ? "홀" : "짝";
   const m = (choice === r) ? 2 : -1;
+
   player.money += bet * m;
   updateMoney();
   result.innerText = `결과: ${r} (${m}배)`;
@@ -203,17 +226,25 @@ function playLadder(num) {
   document.querySelectorAll(".lane").forEach(l => l.classList.remove("active"));
   document.getElementById("l"+num).classList.add("active");
 
-  const mul = [3,2,0,-1,-2].sort(()=>Math.random()-0.5)[num-1];
+  // 1~5등 랜덤 배정
+  const ranks = [1,2,3,4,5].sort(() => Math.random() - 0.5);
+  const rank = ranks[num - 1];
+  const map = {1:3, 2:2, 3:0, 4:-1, 5:-2};
+  const mul = map[rank];
 
-  setTimeout(()=>{
+  setTimeout(() => {
     player.money += bet * mul;
     updateMoney();
-    result.innerText = `${num}번 → ${mul}배`;
-  },1000);
+    result.innerText = `${num}번 → ${rank}등 (${mul}배)`;
+  }, 1000);
 }
 
 function updateMoney() {
-  document.getElementById("money").innerText = player.money;
+  money.innerText = player.money;
+}
+
+function updateBet() {
+  document.getElementById("bet").innerText = bet;
 }
 
 function goMain() {
@@ -231,6 +262,8 @@ const gameTitle = document.getElementById("gameTitle");
 const oddArea = document.getElementById("oddArea");
 const ladderArea = document.getElementById("ladderArea");
 const result = document.getElementById("result");
+const customBet = document.getElementById("customBet");
+const money = document.getElementById("money");
 </script>
 
 </body>
