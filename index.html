@@ -205,9 +205,11 @@ input {
   <div class="balance">보유 금액: <span id="money">0</span>P</div>
 
   <div id="setup" class="screen active">
-    <input id="startMoney" type="number" placeholder="보유 포인트 입력" style="width:100%">
-    <button class="btn" onclick="setMoney()">게임 시작</button>
+  <div class="bet-line">
+    <input id="startMoney" class="bet-input" type="number" placeholder="보유 포인트 입력">
+    <button class="max-btn" onclick="setMoney()">START</button>
   </div>
+</div>
 
   <div class="tabs">
     <div class="tab active" onclick="switchGame('odd', this)">홀짝</div>
