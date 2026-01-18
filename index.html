@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>BLACK CASINO</title>
+<title>BLACK ROOM</title>
 
 <style>
 body {
   margin: 0;
-  background: #0b0b0b;
+  background: radial-gradient(circle at top, #1a1a1a, #000);
   color: #fff;
   font-family: Pretendard, system-ui, sans-serif;
   display: flex;
@@ -21,25 +21,28 @@ body {
 }
 
 /* 배너 */
-.header {
-  background: linear-gradient(90deg, #ff004c, #ff9900, #ff004c);
-  text-align: center;
+.banner-main {
+  background: linear-gradient(90deg, #ff004c, #ff9900);
   padding: 16px;
+  text-align: center;
   font-weight: 900;
   letter-spacing: 3px;
-  animation: blink 1s infinite;
-  font-size: 16px;
 }
 
-@keyframes blink {
-  0%,100% { opacity: 1; }
-  50% { opacity: 0.6; }
+.banner-sub {
+  background: #111;
+  border-top: 1px solid #333;
+  border-bottom: 1px solid #333;
+  padding: 10px;
+  font-size: 12px;
+  text-align: center;
+  color: #ffb347;
 }
 
 /* 잔액 */
 .balance {
   text-align: center;
-  margin: 15px 0;
+  margin: 18px 0;
   font-size: 18px;
   font-weight: bold;
 }
@@ -50,10 +53,11 @@ body {
 }
 .tab {
   flex: 1;
-  padding: 14px;
+  padding: 16px 0;
   text-align: center;
-  background: #1a1a1a;
+  background: #111;
   cursor: pointer;
+  font-weight: bold;
 }
 .tab.active {
   background: #ff004c;
@@ -62,7 +66,7 @@ body {
 /* 화면 */
 .screen {
   display: none;
-  padding: 16px;
+  padding: 18px;
 }
 .screen.active {
   display: block;
@@ -72,8 +76,8 @@ body {
 input {
   width: 100%;
   padding: 14px;
-  margin: 12px 0;
-  background: #111;
+  margin-bottom: 12px;
+  background: #0d0d0d;
   color: #fff;
   border: 1px solid #333;
   border-radius: 6px;
@@ -84,7 +88,7 @@ input {
 .btn {
   width: 100%;
   padding: 16px;
-  margin-top: 16px;
+  margin-top: 18px;
   background: #ff004c;
   border: none;
   font-size: 18px;
@@ -92,28 +96,22 @@ input {
   border-radius: 8px;
 }
 
-/* 칩 */
-.chips {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  margin-top: 10px;
-}
-.chip {
-  background: #111;
-  padding: 14px;
-  text-align: center;
-  border-radius: 30px;
-  border: 1px solid #ff004c;
-  font-weight: bold;
+.btn-small {
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px;
+  font-size: 14px;
+  background: #222;
+  border: 1px solid #555;
+  color: #ccc;
 }
 
 /* 사다리 선택 */
 .ladder-pick {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 10px;
-  margin-top: 10px;
+  gap: 12px;
+  margin-top: 12px;
 }
 .pick-btn {
   padding: 14px 0;
@@ -121,6 +119,7 @@ input {
   border: 1px solid #555;
   border-radius: 6px;
   font-weight: bold;
+  color: #fff;
 }
 .pick-btn.active {
   background: #ff004c;
@@ -128,16 +127,16 @@ input {
 
 /* 로그 */
 .log {
-  margin: 16px;
-  background: #111;
-  padding: 10px;
-  max-height: 160px;
+  margin: 18px;
+  background: #0d0d0d;
+  padding: 12px;
+  max-height: 180px;
   overflow-y: auto;
   font-size: 13px;
 }
 .log div {
   margin-bottom: 6px;
-  color: #ccc;
+  color: #bbb;
 }
 
 /* 팝업 */
@@ -153,7 +152,7 @@ input {
 .popup-box {
   background: #111;
   border: 2px solid #ff004c;
-  padding: 25px;
+  padding: 26px;
   text-align: center;
   width: 85%;
 }
@@ -162,7 +161,7 @@ input {
 }
 .popup-box p {
   font-size: 13px;
-  color: #ccc;
+  color: #aaa;
   margin: 15px 0;
 }
 </style>
@@ -172,14 +171,16 @@ input {
 
 <div class="popup" id="popup">
   <div class="popup-box">
-    <h2>⚠ WELCOME ⚠</h2>
-    <p>18세 이상 전용<br>모든 책임은 본인에게 있습니다</p>
-    <button class="btn" onclick="closePopup()">입장</button>
+    <h2>BLACK ROOM</h2>
+    <p>본 서비스는 실험용 UI입니다.<br>실제 금전 사용 없음</p>
+    <button class="btn" onclick="popup.style.display='none'">ENTER</button>
   </div>
 </div>
 
 <div class="app">
-  <div class="header">🔥 BLACK CASINO 🔥</div>
+
+  <div class="banner-main">BLACK ROOM</div>
+  <div class="banner-sub">LIVE • HIGH RETURN • NO MERCY</div>
 
   <div class="balance">보유 금액: <span id="money">10000</span>P</div>
 
@@ -190,20 +191,18 @@ input {
 
   <!-- 홀짝 -->
   <div id="odd" class="screen active">
-    <input id="betOE" type="number" placeholder="배팅 금액" />
-    <div class="chips">
-      <div class="chip" onclick="addBet(100)">100</div>
-      <div class="chip" onclick="addBet(500)">500</div>
-      <div class="chip" onclick="addBet(1000)">1000</div>
-      <div class="chip" onclick="addBet(5000)">5000</div>
-    </div>
+    <input id="betOE" type="number" placeholder="배팅 금액"/>
+    <button class="btn-small" onclick="allIn('betOE')">ALL IN</button>
     <button class="btn" onclick="playOddEven()">PLAY</button>
   </div>
 
   <!-- 사다리 -->
   <div id="ladder" class="screen">
-    <input id="betL" type="number" placeholder="배팅 금액" />
+    <input id="betL" type="number" placeholder="배팅 금액"/>
+    <button class="btn-small" onclick="allIn('betL')">ALL IN</button>
+
     <div class="ladder-pick" id="ladderPick"></div>
+
     <button class="btn" onclick="playLadder()">PLAY</button>
   </div>
 
@@ -213,10 +212,6 @@ input {
 <script>
 let money = 10000;
 let ladderChoice = null;
-
-function closePopup() {
-  popup.style.display = "none";
-}
 
 function updateMoney(v) {
   money += v;
@@ -234,20 +229,22 @@ function switchGame(id, el) {
   el.classList.add('active');
 }
 
-function addBet(v) {
-  const input = document.querySelector('.screen.active input');
-  input.value = Number(input.value || 0) + v;
+function allIn(id) {
+  document.getElementById(id).value = money;
 }
 
+/* 홀짝 */
 function playOddEven() {
   const bet = Number(betOE.value);
   if (bet <= 0 || bet > money) return alert("배팅 금액 오류");
+
   const win = Math.random() < 0.5;
-  const r = win ? bet * 2 : -bet;
+  const r = win ? bet : -bet;   // ★ 성공 1배
   updateMoney(r);
-  addLog(`홀짝 ${win ? "승리" : "패배"} (${r}P)`);
+  addLog(`홀짝 ${win ? "적중" : "실패"} (${r}P)`);
 }
 
+/* 사다리 */
 function playLadder() {
   const bet = Number(betL.value);
   if (!ladderChoice) return alert("번호 선택");
@@ -257,10 +254,10 @@ function playLadder() {
   const multi = [3,2,0,-1,-2][rank];
   const r = bet * multi;
   updateMoney(r);
-  addLog(`사다리 선택 ${ladderChoice} → ${rank+1}등 (${r}P)`);
+  addLog(`사다리 ${ladderChoice} → ${rank+1}등 (${r}P)`);
 }
 
-// 사다리 버튼 생성
+/* 사다리 버튼 생성 */
 for (let i = 1; i <= 5; i++) {
   const b = document.createElement("button");
   b.className = "pick-btn";
