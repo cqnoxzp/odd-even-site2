@@ -30,13 +30,14 @@ body {
   font-size: 16px;
 }
 
-/* 가짜 당첨 알림 */
+/* 🔥 가짜 당첨 배너 (클릭 방해 제거 핵심) */
 .fake-win {
   background: #111;
   text-align: center;
   font-size: 13px;
   padding: 8px;
   color: #ffcc00;
+  pointer-events: none; /* ⭐ 이게 핵심 */
 }
 
 /* 잔액 */
@@ -146,7 +147,7 @@ input {
 <div class="popup" id="popup">
   <div class="popup-box">
     <h2>⚠ WELCOME ⚠</h2>
-    <p>본 서비스는 18세 이상 전용입니다<br>모든 책임은 사용자 본인에게 있습니다</p>
+    <p>18세 이상 전용<br>모든 책임은 본인에게 있습니다</p>
     <button class="btn" onclick="start()">입장</button>
   </div>
 </div>
@@ -157,7 +158,7 @@ input {
 
   <div class="balance">보유 금액: <span id="money">0</span>P</div>
 
-  <!-- 초기 자금 입력 -->
+  <!-- 초기 자금 -->
   <div id="setup">
     <input id="startMoney" type="number" placeholder="보유 포인트 입력">
     <button class="btn" onclick="setMoney()">게임 시작</button>
@@ -169,4 +170,76 @@ input {
 
     <div class="choice">
       <button onclick="pick('홀', this)">홀</button>
-      <button onclick="pick('짝', this)">짝</but
+      <button onclick="pick('짝', this)">짝</button>
+    </div>
+
+    <button class="btn" onclick="play()">PLAY</button>
+    <div class="streak" id="streak">연승: 0</div>
+  </div>
+
+  <div class="log" id="log"></div>
+</div>
+
+<script>
+let money = 0;
+let choice = null;
+let streak = 0;
+
+const names = ['김**','이**','박**','최**','정**'];
+
+function start() {
+  popup.style.display = "none";
+}
+
+function setMoney() {
+  const v = Number(startMoney.value);
+  if (v <= 0) return alert("금액 입력");
+  money = v;
+  moneyEl.innerText = money;
+  setup.style.display = "none";
+  game.style.display = "block";
+}
+
+function pick(v, el) {
+  choice = v;
+  document.querySelectorAll('.choice button').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function play() {
+  const betV = Number(bet.value);
+  if (!choice) return alert("홀/짝 선택");
+  if (betV <= 0 || betV > money) return alert("배팅 금액 오류");
+
+  const answer = Math.random() < 0.5 ? '홀' : '짝';
+
+  let logText = `정답: ${answer} / 선택: ${choice}`;
+
+  if (choice === answer) {
+    money += betV;
+    streak++;
+    logText += ` → 승리 (+${betV})`;
+  } else {
+    money -= betV;
+    streak = 0;
+    logText += ` → 패배 (-${betV})`;
+  }
+
+  moneyEl.innerText = money;
+  streakEl.innerText = `연승: ${streak}`;
+  log.innerHTML = `<div>${logText}</div>` + log.innerHTML;
+}
+
+setInterval(() => {
+  const name = names[Math.floor(Math.random() * names.length)];
+  const amt = (Math.floor(Math.random() * 40) + 10) * 1000;
+  fakeWin.innerText = `${name}님이 ${amt}P 획득`;
+}, 7000);
+
+const moneyEl = document.getElementById("money");
+const log = document.getElementById("log");
+const streakEl = document.getElementById("streak");
+</script>
+
+</body>
+</html>
