@@ -2,37 +2,48 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>UNDERGROUND</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>바카라 LIVE</title>
 
 <style>
 * { box-sizing: border-box; }
 
 body {
   margin: 0;
-  height: 100vh;
-  background: radial-gradient(circle at top, #1a0000, #000);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: "Malgun Gothic", Arial, sans-serif;
-  color: #ddd;
+  background: #000;
+  font-family: Arial, sans-serif;
+  color: #fff;
 }
 
 .app {
-  width: 420px;
-  background: linear-gradient(180deg, #0b0000, #120000);
-  border: 1px solid #400;
-  border-radius: 6px;
-  padding: 22px;
-  box-shadow: 0 0 40px rgba(255,0,0,.2);
+  max-width: 420px;
+  margin: auto;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #050000, #120000);
+  padding: 14px;
+}
+
+/* 🔥 광고 배너 */
+.banner {
+  text-align: center;
+  padding: 10px;
+  font-weight: bold;
+  color: #ffd700;
+  border: 1px solid #700;
+  margin-bottom: 12px;
+  animation: blink 1.2s infinite;
+}
+
+@keyframes blink {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0.4; }
 }
 
 h1 {
-  color: #b00000;
-  font-size: 28px;
-  letter-spacing: 3px;
   text-align: center;
-  margin-bottom: 20px;
+  color: #c00000;
+  letter-spacing: 3px;
+  margin: 10px 0 16px;
 }
 
 .hidden { display: none; }
@@ -40,62 +51,59 @@ h1 {
 input {
   width: 100%;
   padding: 12px;
-  background: #000;
-  border: 1px solid #400;
-  color: #fff;
   margin-bottom: 10px;
+  background: #000;
+  border: 1px solid #700;
+  color: #fff;
+  font-size: 16px;
 }
 
 button {
-  background: linear-gradient(180deg, #400, #700);
+  width: 100%;
+  padding: 14px;
+  margin-top: 8px;
+  background: linear-gradient(180deg, #600, #a00);
   border: 1px solid #900;
   color: #fff;
-  padding: 12px;
-  cursor: pointer;
   font-weight: bold;
+  font-size: 16px;
 }
 
-button:hover {
-  background: linear-gradient(180deg, #700, #a00);
+button:active {
+  transform: scale(0.98);
 }
 
-.buttons {
+.row {
   display: flex;
-  gap: 10px;
-  margin-top: 10px;
+  gap: 8px;
+}
+
+.row button {
+  flex: 1;
 }
 
 .status {
   background: #000;
-  border: 1px solid #400;
+  border: 1px solid #700;
   padding: 10px;
-  margin-bottom: 10px;
+  margin: 10px 0;
   font-size: 14px;
-  color: #f55;
+  color: #ff6666;
 }
 
 .chips button {
   background: #111;
-  border: 1px solid #700;
-  color: #f99;
-  margin: 4px;
-  padding: 8px 12px;
+  border: 1px solid #a00;
+  color: #ffd700;
 }
 
 .result {
-  background: #000;
-  border: 1px solid #700;
+  margin-top: 12px;
   padding: 12px;
-  margin-top: 14px;
-  color: #fff;
+  background: #000;
+  border: 1px solid #900;
+  text-align: center;
   font-size: 15px;
-}
-
-.back {
-  background: #111;
-  border: 1px solid #444;
-  margin-top: 20px;
-  width: 100%;
 }
 </style>
 </head>
@@ -103,15 +111,17 @@ button:hover {
 <body>
 <div class="app">
 
+<div class="banner">💰 LIVE 바카라 | 고배당 즉시정산 💰</div>
+
 <!-- 메인 -->
 <div id="main">
-  <h1>UNDERGROUND</h1>
+  <h1>바카라 LIVE</h1>
 
-  <input id="moneyInput" type="number" placeholder="시드 금액">
+  <input id="moneyInput" type="number" placeholder="시드 금액 입력">
 
-  <div class="buttons">
-    <button onclick="selectGame('odd')">홀짝</button>
-    <button onclick="selectGame('ladder')">사다리</button>
+  <div class="row">
+    <button onclick="startGame('odd')">홀짝</button>
+    <button onclick="startGame('ladder')">사다리</button>
   </div>
 </div>
 
@@ -120,12 +130,11 @@ button:hover {
   <h1 id="gameTitle"></h1>
 
   <div class="status">
-    보유 금액: <span id="money"></span><br>
-    현재 배팅: <span id="bet">0</span>
+    보유 금액: <span id="money">0</span><br>
+    배팅 금액: <span id="bet">0</span>
   </div>
 
-  <!-- 칩 -->
-  <div class="chips">
+  <div class="chips row">
     <button onclick="addBet(100)">100</button>
     <button onclick="addBet(500)">500</button>
     <button onclick="addBet(1000)">1000</button>
@@ -136,13 +145,13 @@ button:hover {
   <button onclick="setCustomBet()">배팅 적용</button>
 
   <!-- 홀짝 -->
-  <div id="oddArea" class="hidden buttons">
+  <div id="oddArea" class="row hidden">
     <button onclick="playOddEven('홀')">홀</button>
     <button onclick="playOddEven('짝')">짝</button>
   </div>
 
   <!-- 사다리 -->
-  <div id="ladderArea" class="hidden buttons">
+  <div id="ladderArea" class="row hidden">
     <button onclick="playLadder(1)">1</button>
     <button onclick="playLadder(2)">2</button>
     <button onclick="playLadder(3)">3</button>
@@ -150,9 +159,9 @@ button:hover {
     <button onclick="playLadder(5)">5</button>
   </div>
 
-  <div class="result" id="result">대기 중...</div>
+  <div class="result" id="result">배팅 대기 중</div>
 
-  <button class="back" onclick="goMain()">← 메인</button>
+  <button onclick="backMain()">메인으로</button>
 </div>
 
 </div>
@@ -160,9 +169,9 @@ button:hover {
 <script>
 let money = 0;
 let bet = 0;
-let currentGame = "";
+let gameType = "";
 
-function selectGame(game) {
+function startGame(type) {
   const m = Number(moneyInput.value);
   if (m <= 0) {
     alert("시드 금액 입력");
@@ -171,67 +180,73 @@ function selectGame(game) {
 
   money = m;
   bet = 0;
-  currentGame = game;
-
-  updateStatus();
+  gameType = type;
 
   main.classList.add("hidden");
   game.classList.remove("hidden");
 
+  gameTitle.innerText = type === "odd" ? "홀짝" : "사다리";
+
   oddArea.classList.add("hidden");
   ladderArea.classList.add("hidden");
+  (type === "odd" ? oddArea : ladderArea).classList.remove("hidden");
 
-  gameTitle.innerText = game === "odd" ? "ODD / EVEN" : "LADDER";
-
-  (game === "odd" ? oddArea : ladderArea).classList.remove("hidden");
-  result.innerText = "배팅 대기 중...";
+  update();
+  result.innerText = "배팅 대기 중";
 }
 
 function addBet(amount) {
-  if (bet + amount > money) return alert("잔액 부족");
+  if (bet + amount > money) {
+    alert("보유 금액 초과");
+    return;
+  }
   bet += amount;
-  updateStatus();
+  update();
 }
 
 function setCustomBet() {
   const v = Number(customBet.value);
-  if (v <= 0 || v > money) return alert("잘못된 금액");
+  if (v <= 0 || v > money) {
+    alert("보유 금액 초과 또는 잘못된 값");
+    return;
+  }
   bet = v;
-  updateStatus();
+  update();
 }
 
 function playOddEven(choice) {
   if (bet <= 0) return alert("배팅 필요");
+  if (bet > money) return alert("잔액 부족");
 
   const r = Math.random() < 0.5 ? "홀" : "짝";
   const mul = (choice === r) ? 2 : -1;
 
   money += bet * mul;
-  updateStatus();
+  update();
 
-  result.innerText = `결과: ${r} / 배율 ${mul}`;
+  result.innerText = `결과: ${r} / ${mul}배`;
 }
 
 function playLadder(num) {
   if (bet <= 0) return alert("배팅 필요");
+  if (bet > money) return alert("잔액 부족");
 
   const ranks = [1,2,3,4,5].sort(() => Math.random() - 0.5);
   const rank = ranks[num - 1];
   const map = {1:3, 2:2, 3:0, 4:-1, 5:-2};
-  const mul = map[rank];
 
-  money += bet * mul;
-  updateStatus();
+  money += bet * map[rank];
+  update();
 
-  result.innerText = `${num}번 → ${rank}등 / ${mul}배`;
+  result.innerText = `${num}번 → ${rank}등 (${map[rank]}배)`;
 }
 
-function updateStatus() {
+function update() {
   document.getElementById("money").innerText = money;
   document.getElementById("bet").innerText = bet;
 }
 
-function goMain() {
+function backMain() {
   game.classList.add("hidden");
   main.classList.remove("hidden");
 }
