@@ -65,9 +65,8 @@ body {
 .screen { display: none; padding: 16px; }
 .screen.active { display: block; }
 
-/* 입력/버튼 */
+/* 입력 공통 */
 input, button {
-  width: 100%;
   height: 54px;
   font-size: 16px;
   border-radius: 8px;
@@ -84,6 +83,23 @@ input {
   border: none;
   font-weight: 800;
   color: #fff;
+  width: 100%;
+}
+
+/* 배팅 라인 */
+.bet-line {
+  display: flex;
+  gap: 8px;
+}
+.bet-input {
+  width: 70%;
+}
+.max-btn {
+  width: 30%;
+  background: #111;
+  border: 1px solid #ff004c;
+  color: #ff004c;
+  font-weight: bold;
 }
 
 /* 홀짝 */
@@ -93,6 +109,7 @@ input {
   margin-top: 14px;
 }
 .choice button {
+  flex: 1;
   background: #111;
   border: 1px solid #ff004c;
   color: #fff;
@@ -118,16 +135,25 @@ input {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 8px;
-  margin: 14px 0;
+  margin: 16px 0;
 }
 .slot {
   background: #111;
   border: 2px solid #333;
-  height: 60px;
-  font-size: 30px;
+  height: 64px;
+  font-size: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* 슬롯 애니메이션 */
+.spinning {
+  animation: spin 0.15s infinite linear;
+}
+@keyframes spin {
+  from { transform: translateY(-10px); }
+  to { transform: translateY(10px); }
 }
 
 /* 로그 */
@@ -178,13 +204,11 @@ input {
   <div class="fake-win" id="fakeWin"></div>
   <div class="balance">보유 금액: <span id="money">0</span>P</div>
 
-  <!-- 초기 -->
   <div id="setup" class="screen active">
-    <input id="startMoney" type="number" placeholder="보유 포인트 입력">
+    <input id="startMoney" type="number" placeholder="보유 포인트 입력" style="width:100%">
     <button class="btn" onclick="setMoney()">게임 시작</button>
   </div>
 
-  <!-- 탭 -->
   <div class="tabs">
     <div class="tab active" onclick="switchGame('odd', this)">홀짝</div>
     <div class="tab" onclick="switchGame('ladder', this)">사다리</div>
@@ -193,7 +217,10 @@ input {
 
   <!-- 홀짝 -->
   <div id="odd" class="screen">
-    <input id="betOE" type="number" placeholder="배팅 금액">
+    <div class="bet-line">
+      <input id="betOE" class="bet-input" type="number" placeholder="배팅 금액">
+      <button class="max-btn" onclick="betOE.value = money">MAX</button>
+    </div>
     <div class="choice">
       <button onclick="pickOE('홀', this)">홀</button>
       <button onclick="pickOE('짝', this)">짝</button>
@@ -203,14 +230,20 @@ input {
 
   <!-- 사다리 -->
   <div id="ladder" class="screen">
-    <input id="betL" type="number" placeholder="배팅 금액">
+    <div class="bet-line">
+      <input id="betL" class="bet-input" type="number" placeholder="배팅 금액">
+      <button class="max-btn" onclick="betL.value = money">MAX</button>
+    </div>
     <div class="ladder-pick" id="ladderPick"></div>
     <button class="btn" onclick="playLadder()">PLAY</button>
   </div>
 
   <!-- 슬롯 -->
   <div id="slot" class="screen">
-    <input id="betS" type="number" placeholder="배팅 금액">
+    <div class="bet-line">
+      <input id="betS" class="bet-input" type="number" placeholder="배팅 금액">
+      <button class="max-btn" onclick="betS.value = money">MAX</button>
+    </div>
     <div class="slots" id="slots"></div>
     <button class="btn" onclick="playSlot()">SPIN</button>
   </div>
@@ -258,8 +291,8 @@ function playOdd() {
   if (!oeChoice || bet <= 0 || bet > money) return alert("배팅 오류");
   const ans = Math.random() < 0.5 ? '홀' : '짝';
   money += (oeChoice === ans ? bet : -bet);
-  addLog(`홀짝 ${ans} → ${oeChoice === ans ? '+' : '-'}${bet}`);
   moneyEl.innerText = money;
+  addLog(`홀짝 ${ans}`);
 }
 
 /* 사다리 */
@@ -291,26 +324,37 @@ for (let i = 0; i < 5; i++) {
   d.innerText = "❔";
   slotsEl.appendChild(d);
 }
+
 function playSlot() {
   const bet = Number(betS.value);
   if (bet <= 0 || bet > money) return alert("배팅 오류");
 
-  const result = [];
-  document.querySelectorAll('.slot').forEach(s => {
-    const sym = symbols[Math.floor(Math.random()*symbols.length)];
-    s.innerText = sym;
-    result.push(sym);
-  });
+  const slotEls = document.querySelectorAll('.slot');
+  slotEls.forEach(s => s.classList.add("spinning"));
 
+  let count = 0;
+  const spin = setInterval(() => {
+    slotEls.forEach(s => {
+      s.innerText = symbols[Math.floor(Math.random()*symbols.length)];
+    });
+    if (++count > 12) {
+      clearInterval(spin);
+      slotEls.forEach(s => s.classList.remove("spinning"));
+      settleSlot(bet);
+    }
+  }, 80);
+}
+
+function settleSlot(bet) {
+  const result = [...document.querySelectorAll('.slot')].map(s => s.innerText);
   const counts = {};
   result.forEach(x => counts[x] = (counts[x] || 0) + 1);
   const max = Math.max(...Object.values(counts));
 
-  let multi = 0;
+  let multi = -1;
   if (max === 5) multi = 4;
   else if (max === 4) multi = 2;
   else if (max === 3) multi = 1;
-  else multi = -1;
 
   const r = bet * multi;
   money += r;
