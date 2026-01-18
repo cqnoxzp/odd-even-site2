@@ -20,7 +20,7 @@ body {
   max-width: 420px;
 }
 
-/* 상단 배너 (움직이는 그라데이션) */
+/* 상단 배너 */
 .header {
   background: linear-gradient(270deg, #ff004c, #ff9900, #ff004c);
   background-size: 600% 600%;
@@ -29,7 +29,6 @@ body {
   padding: 16px;
   font-weight: 900;
   letter-spacing: 3px;
-  font-size: 16px;
 }
 
 @keyframes gradientMove {
@@ -65,15 +64,14 @@ body {
   text-align: center;
   padding: 14px;
   background: #111;
-  border-bottom: 2px solid #111;
   font-weight: bold;
 }
 .tab.active {
-  border-bottom: 2px solid #ff004c;
   color: #ff004c;
+  border-bottom: 2px solid #ff004c;
 }
 
-/* 공통 */
+/* 화면 */
 .screen {
   display: none;
   padding: 16px;
@@ -82,11 +80,13 @@ body {
   display: block;
 }
 
-input, .btn {
+/* 공통 입력/버튼 */
+input, button {
   width: 100%;
   height: 54px;
   font-size: 16px;
   border-radius: 8px;
+  box-sizing: border-box;
 }
 
 input {
@@ -111,14 +111,10 @@ input {
   margin-top: 14px;
 }
 .choice button {
-  flex: 1;
-  height: 54px;
-  font-size: 17px;
-  font-weight: 800;
   background: #111;
   border: 1px solid #ff004c;
   color: #fff;
-  border-radius: 8px;
+  font-weight: bold;
 }
 .choice button.active {
   background: #ff004c;
@@ -132,24 +128,13 @@ input {
   margin-top: 14px;
 }
 .ladder-pick button {
-  height: 54px;
   background: #111;
   border: 1px solid #555;
-  border-radius: 8px;
-  font-weight: bold;
   color: #fff;
+  font-weight: bold;
 }
 .ladder-pick button.active {
   background: #ff004c;
-}
-
-/* 연승 */
-.streak {
-  text-align: center;
-  margin-top: 12px;
-  font-size: 15px;
-  font-weight: bold;
-  color: #ffcc00;
 }
 
 /* 로그 */
@@ -201,7 +186,7 @@ input {
   <div class="popup-box">
     <h2>⚠ WELCOME ⚠</h2>
     <p>18세 이상 전용<br>모든 책임은 본인에게 있습니다</p>
-    <button class="btn" onclick="start()">입장</button>
+    <button class="btn" onclick="closePopup()">입장</button>
   </div>
 </div>
 
@@ -211,7 +196,7 @@ input {
 
   <div class="balance">보유 금액: <span id="money">0</span>P</div>
 
-  <!-- 초기 자금 -->
+  <!-- 초기 자금 입력 -->
   <div id="setup" class="screen active">
     <input id="startMoney" type="number" placeholder="보유 포인트 입력">
     <button class="btn" onclick="setMoney()">게임 시작</button>
@@ -224,14 +209,13 @@ input {
   </div>
 
   <!-- 홀짝 -->
-  <div id="odd" class="screen active">
+  <div id="odd" class="screen">
     <input id="betOE" type="number" placeholder="배팅 금액">
     <div class="choice">
       <button onclick="pickOE('홀', this)">홀</button>
       <button onclick="pickOE('짝', this)">짝</button>
     </div>
     <button class="btn" onclick="playOdd()">PLAY</button>
-    <div class="streak" id="streak">연승: 0</div>
   </div>
 
   <!-- 사다리 -->
@@ -248,11 +232,10 @@ input {
 let money = 0;
 let oeChoice = null;
 let ladderChoice = null;
-let streak = 0;
 
 const names = ['김**','이**','박**','최**','정**'];
 
-function start() {
+function closePopup() {
   popup.style.display = "none";
 }
 
@@ -262,6 +245,7 @@ function setMoney() {
   money = v;
   moneyEl.innerText = money;
   setup.style.display = "none";
+  odd.classList.add("active");   // 바로 게임 화면
 }
 
 function switchGame(id, el) {
@@ -285,15 +269,12 @@ function playOdd() {
   const answer = Math.random() < 0.5 ? '홀' : '짝';
   if (oeChoice === answer) {
     money += bet;
-    streak++;
-    addLog(`홀짝 정답 ${answer} → 승리 +${bet}`);
+    addLog(`홀짝 정답 ${answer} → +${bet}`);
   } else {
     money -= bet;
-    streak = 0;
-    addLog(`홀짝 정답 ${answer} → 패배 -${bet}`);
+    addLog(`홀짝 정답 ${answer} → -${bet}`);
   }
   moneyEl.innerText = money;
-  streakEl.innerText = `연승: ${streak}`;
 }
 
 function playLadder() {
@@ -313,6 +294,7 @@ function addLog(t) {
   log.innerHTML = `<div>${t}</div>` + log.innerHTML;
 }
 
+/* 가짜 당첨 */
 setInterval(() => {
   const name = names[Math.floor(Math.random() * names.length)];
   const amt = (Math.floor(Math.random() * 40) + 10) * 1000;
@@ -333,7 +315,6 @@ for (let i = 1; i <= 5; i++) {
 
 const moneyEl = document.getElementById("money");
 const log = document.getElementById("log");
-const streakEl = document.getElementById("streak");
 </script>
 
 </body>
