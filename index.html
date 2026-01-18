@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BLACK ROOM</title>
 
 <style>
@@ -31,36 +31,50 @@ body {
 
 .banner-sub {
   background: #111;
-  border-top: 1px solid #333;
-  border-bottom: 1px solid #333;
-  padding: 10px;
-  font-size: 12px;
+  padding: 8px;
   text-align: center;
+  font-size: 12px;
   color: #ffb347;
 }
 
 /* 잔액 */
 .balance {
   text-align: center;
-  margin: 18px 0;
+  margin: 14px 0;
   font-size: 18px;
   font-weight: bold;
 }
 
-/* 탭 */
-.tabs {
-  display: flex;
+/* 버튼 & 입력 */
+input, .btn {
+  width: 100%;
+  padding: 16px;
+  margin-top: 14px;
+  font-size: 16px;
+  border-radius: 8px;
+  box-sizing: border-box;
 }
-.tab {
-  flex: 1;
-  padding: 16px 0;
-  text-align: center;
-  background: #111;
-  cursor: pointer;
+
+input {
+  background: #0d0d0d;
+  border: 1px solid #333;
+  color: #fff;
+}
+
+.btn {
+  background: #ff004c;
+  border: none;
+  color: #fff;
   font-weight: bold;
 }
-.tab.active {
-  background: #ff004c;
+
+.btn.gray {
+  background: #222;
+}
+
+.btn.small {
+  padding: 12px;
+  font-size: 14px;
 }
 
 /* 화면 */
@@ -72,57 +86,12 @@ body {
   display: block;
 }
 
-/* 입력 */
-input {
-  width: 100%;
-  padding: 14px;
-  margin-bottom: 12px;
-  background: #0d0d0d;
-  color: #fff;
-  border: 1px solid #333;
-  border-radius: 6px;
-  font-size: 16px;
-}
-
-/* 버튼 */
-.btn {
-  width: 100%;
-  padding: 16px;
-  margin-top: 18px;
-  background: #ff004c;
-  border: none;
-  font-size: 18px;
-  color: #fff;
-  border-radius: 8px;
-}
-
-.btn-small {
-  width: 100%;
+/* 연승 */
+.streak {
+  text-align: center;
   margin-top: 8px;
-  padding: 10px;
-  font-size: 14px;
-  background: #222;
-  border: 1px solid #555;
-  color: #ccc;
-}
-
-/* 사다리 선택 */
-.ladder-pick {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 12px;
-  margin-top: 12px;
-}
-.pick-btn {
-  padding: 14px 0;
-  background: #111;
-  border: 1px solid #555;
-  border-radius: 6px;
+  color: gold;
   font-weight: bold;
-  color: #fff;
-}
-.pick-btn.active {
-  background: #ff004c;
 }
 
 /* 로그 */
@@ -143,7 +112,7 @@ input {
 .popup {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.9);
+  background: rgba(0,0,0,0.92);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -153,16 +122,27 @@ input {
   background: #111;
   border: 2px solid #ff004c;
   padding: 26px;
-  text-align: center;
   width: 85%;
+  text-align: center;
 }
-.popup-box h2 {
-  color: #ff004c;
+
+/* 파산 */
+.lock {
+  text-align: center;
+  padding: 60px 20px;
+  color: red;
+  font-weight: bold;
+  font-size: 20px;
 }
-.popup-box p {
-  font-size: 13px;
-  color: #aaa;
-  margin: 15px 0;
+
+/* 올인 효과 */
+.flash {
+  animation: flash 0.3s 3;
+}
+@keyframes flash {
+  0% { background:#000; }
+  50% { background:#ff004c; }
+  100% { background:#000; }
 }
 </style>
 </head>
@@ -172,106 +152,95 @@ input {
 <div class="popup" id="popup">
   <div class="popup-box">
     <h2>BLACK ROOM</h2>
-    <p>본 서비스는 실험용 UI입니다.<br>실제 금전 사용 없음</p>
-    <button class="btn" onclick="popup.style.display='none'">ENTER</button>
+    <p>고위험 · 고수익<br>모든 선택은 본인의 책임입니다</p>
+    <button class="btn" onclick="start()">ENTER</button>
   </div>
 </div>
 
 <div class="app">
 
   <div class="banner-main">BLACK ROOM</div>
-  <div class="banner-sub">LIVE • HIGH RETURN • NO MERCY</div>
+  <div class="banner-sub" id="online"></div>
 
-  <div class="balance">보유 금액: <span id="money">10000</span>P</div>
-
-  <div class="tabs">
-    <div class="tab active" onclick="switchGame('odd', this)">홀짝</div>
-    <div class="tab" onclick="switchGame('ladder', this)">사다리</div>
+  <div id="setup" class="screen active">
+    <input id="initMoney" type="number" placeholder="보유 포인트 입력">
+    <button class="btn" onclick="choose()">홀짝 시작</button>
   </div>
 
-  <!-- 홀짝 -->
-  <div id="odd" class="screen active">
-    <input id="betOE" type="number" placeholder="배팅 금액"/>
-    <button class="btn-small" onclick="allIn('betOE')">ALL IN</button>
-    <button class="btn" onclick="playOddEven()">PLAY</button>
+  <div id="game" class="screen">
+    <div class="balance">보유 포인트: <span id="money"></span>P</div>
+    <input id="bet" type="number" placeholder="배팅 포인트">
+    <button class="btn small gray" onclick="allIn()">ALL IN</button>
+
+    <button class="btn" onclick="play('홀')">홀</button>
+    <button class="btn gray" onclick="play('짝')">짝</button>
+
+    <div class="streak" id="streak"></div>
   </div>
 
-  <!-- 사다리 -->
-  <div id="ladder" class="screen">
-    <input id="betL" type="number" placeholder="배팅 금액"/>
-    <button class="btn-small" onclick="allIn('betL')">ALL IN</button>
-
-    <div class="ladder-pick" id="ladderPick"></div>
-
-    <button class="btn" onclick="playLadder()">PLAY</button>
+  <div id="lock" class="screen">
+    <div class="lock">⛔ ACCOUNT SUSPENDED ⛔</div>
   </div>
 
   <div class="log" id="log"></div>
+
 </div>
 
 <script>
-let money = 10000;
-let ladderChoice = null;
+let money = 0;
+let streak = 0;
 
-function updateMoney(v) {
-  money += v;
+function start() {
+  popup.style.display = "none";
+}
+
+function choose() {
+  money = Number(initMoney.value);
+  if (money <= 0) return alert("금액 입력");
+  setup.classList.remove("active");
+  game.classList.add("active");
+  update();
+}
+
+function update() {
   moneyEl.innerText = money;
 }
 
-function addLog(t) {
-  log.innerHTML = `<div>${t}</div>` + log.innerHTML;
+function allIn() {
+  bet.value = money;
 }
 
-function switchGame(id, el) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  el.classList.add('active');
+function play(choice) {
+  const b = Number(bet.value);
+  if (b <= 0 || b > money) return alert("배팅 오류");
+
+  const answer = Math.random() < 0.5 ? "홀" : "짝";
+  const win = choice === answer;
+  const result = win ? b : -b;
+
+  money += result;
+  document.body.classList.toggle("flash", b === money);
+  update();
+
+  if (win) streak++; else streak = 0;
+  streakEl.innerText = streak > 1 ? `🔥 ${streak}연승 중` : "";
+
+  log.innerHTML = `<div>[${choice}] → 정답 ${answer} (${result}P)</div>` + log.innerHTML;
+
+  if (money <= 0) {
+    game.classList.remove("active");
+    lock.classList.add("active");
+  }
 }
 
-function allIn(id) {
-  document.getElementById(id).value = money;
-}
-
-/* 홀짝 */
-function playOddEven() {
-  const bet = Number(betOE.value);
-  if (bet <= 0 || bet > money) return alert("배팅 금액 오류");
-
-  const win = Math.random() < 0.5;
-  const r = win ? bet : -bet;   // ★ 성공 1배
-  updateMoney(r);
-  addLog(`홀짝 ${win ? "적중" : "실패"} (${r}P)`);
-}
-
-/* 사다리 */
-function playLadder() {
-  const bet = Number(betL.value);
-  if (!ladderChoice) return alert("번호 선택");
-  if (bet <= 0 || bet > money) return alert("배팅 금액 오류");
-
-  const rank = Math.floor(Math.random() * 5);
-  const multi = [3,2,0,-1,-2][rank];
-  const r = bet * multi;
-  updateMoney(r);
-  addLog(`사다리 ${ladderChoice} → ${rank+1}등 (${r}P)`);
-}
-
-/* 사다리 버튼 생성 */
-for (let i = 1; i <= 5; i++) {
-  const b = document.createElement("button");
-  b.className = "pick-btn";
-  b.innerText = i;
-  b.onclick = () => {
-    ladderChoice = i;
-    document.querySelectorAll('.pick-btn').forEach(x => x.classList.remove('active'));
-    b.classList.add('active');
-  };
-  ladderPick.appendChild(b);
-}
+/* 가짜 접속자 */
+setInterval(() => {
+  online.innerText = `● LIVE USERS ${Math.floor(Math.random()*3000+1000)}`;
+}, 1500);
 
 const moneyEl = document.getElementById("money");
 const log = document.getElementById("log");
+const streakEl = document.getElementById("streak");
 </script>
 
 </body>
