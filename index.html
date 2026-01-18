@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Mini Casino</title>
+
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  background: linear-gradient(135deg, #141e30, #243b55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: Arial, sans-serif;
+  color: #fff;
+}
+
+.app {
+  width: 360px;
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(12px);
+  border-radius: 22px;
+  padding: 26px;
+  text-align: center;
+}
+
+.hidden { display: none; }
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  border: none;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+button {
+  flex: 1;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.odd { background: linear-gradient(135deg, #ff5f6d, #ffc371); }
+.even { background: linear-gradient(135deg, #36d1dc, #5b86e5); }
+.back { background: #444; margin-top: 20px; }
+
+.chips button {
+  margin: 5px;
+  padding: 10px 14px;
+  border-radius: 50px;
+  background: gold;
+}
+
+.ladder {
+  display: flex;
+  justify-content: space-between;
+  height: 160px;
+  margin: 20px 0;
+}
+
+.lane {
+  width: 6px;
+  background: #555;
+  position: relative;
+}
+
+.lane.active::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -7px;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  animation: drop 1s linear forwards;
+}
+
+@keyframes drop {
+  to { top: 140px; }
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<!-- 메인 -->
+<div id="main">
+  <h1>Mini Casino</h1>
+  <input id="nickname" placeholder="닉네임">
+  <input id="moneyInput" type="number" placeholder="보유 금액">
+  <div class="buttons">
+    <button class="odd" onclick="selectGame('odd')">홀짝</button>
+    <button class="even" onclick="selectGame('ladder')">사다리</button>
+  </div>
+</div>
+
+<!-- 게임 -->
+<div id="game" class="hidden">
+  <h2 id="gameTitle"></h2>
+  <p><span id="playerName"></span> | 💰 <span id="money"></span></p>
+
+  <!-- 칩 -->
+  <div class="chips">
+    <button onclick="addBet(100)">100</button>
+    <button onclick="addBet(500)">500</button>
+    <button onclick="addBet(1000)">1000</button>
+  </div>
+  <p>배팅 금액: <span id="bet">0</span></p>
+
+  <!-- 홀짝 -->
+  <div id="oddArea" class="hidden">
+    <div class="buttons">
+      <button class="odd" onclick="playOddEven('홀')">홀</button>
+      <button class="even" onclick="playOddEven('짝')">짝</button>
+    </div>
+  </div>
+
+  <!-- 사다리 -->
+  <div id="ladderArea" class="hidden">
+    <div class="ladder">
+      <div class="lane" id="l1"></div>
+      <div class="lane" id="l2"></div>
+      <div class="lane" id="l3"></div>
+      <div class="lane" id="l4"></div>
+      <div class="lane" id="l5"></div>
+    </div>
+    <div class="buttons">
+      <button onclick="playLadder(1)">1</button>
+      <button onclick="playLadder(2)">2</button>
+      <button onclick="playLadder(3)">3</button>
+      <button onclick="playLadder(4)">4</button>
+      <button onclick="playLadder(5)">5</button>
+    </div>
+  </div>
+
+  <p id="result"></p>
+  <button class="back" onclick="goMain()">메인</button>
+</div>
+
+</div>
+
+<script>
+let player = { name:"", money:0, game:"" };
+let bet = 0;
+
+function selectGame(game) {
+  const name = nickname.value.trim();
+  const money = Number(moneyInput.value);
+
+  if (!name || money <= 0) {
+    alert("닉네임과 보유 금액 입력");
+    return;
+  }
+
+  player = { name, money, game };
+  bet = 0;
+  document.getElementById("bet").innerText = bet;
+
+  main.classList.add("hidden");
+  gameDiv.classList.remove("hidden");
+
+  playerName.innerText = name;
+  updateMoney();
+
+  oddArea.classList.add("hidden");
+  ladderArea.classList.add("hidden");
+
+  gameTitle.innerText = game === "odd" ? "홀짝 게임" : "사다리 게임";
+  (game === "odd" ? oddArea : ladderArea).classList.remove("hidden");
+  result.innerText = "";
+}
+
+function addBet(amount) {
+  if (bet + amount > player.money) return;
+  bet += amount;
+  document.getElementById("bet").innerText = bet;
+}
+
+function playOddEven(choice) {
+  if (bet <= 0) return alert("배팅하세요");
+  const r = Math.random() < 0.5 ? "홀" : "짝";
+  const m = (choice === r) ? 2 : -1;
+  player.money += bet * m;
+  updateMoney();
+  result.innerText = `결과: ${r} (${m}배)`;
+}
+
+function playLadder(num) {
+  if (bet <= 0) return alert("배팅하세요");
+
+  document.querySelectorAll(".lane").forEach(l => l.classList.remove("active"));
+  document.getElementById("l"+num).classList.add("active");
+
+  const mul = [3,2,0,-1,-2].sort(()=>Math.random()-0.5)[num-1];
+
+  setTimeout(()=>{
+    player.money += bet * mul;
+    updateMoney();
+    result.innerText = `${num}번 → ${mul}배`;
+  },1000);
+}
+
+function updateMoney() {
+  document.getElementById("money").innerText = player.money;
+}
+
+function goMain() {
+  gameDiv.classList.add("hidden");
+  main.classList.remove("hidden");
+}
+
+// DOM
+const main = document.getElementById("main");
+const gameDiv = document.getElementById("game");
+const nickname = document.getElementById("nickname");
+const moneyInput = document.getElementById("moneyInput");
+const playerName = document.getElementById("playerName");
+const gameTitle = document.getElementById("gameTitle");
+const oddArea = document.getElementById("oddArea");
+const ladderArea = document.getElementById("ladderArea");
+const result = document.getElementById("result");
+</script>
+
+</body>
+</html>
