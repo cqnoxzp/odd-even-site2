@@ -11,9 +11,16 @@ body {
   background: #0b0b0b;
   color: #fff;
   font-family: Pretendard, system-ui, sans-serif;
+  display: flex;
+  justify-content: center;
 }
 
-/* ===== 배너 ===== */
+.app {
+  width: 100%;
+  max-width: 420px;
+}
+
+/* 배너 */
 .header {
   background: linear-gradient(90deg, #ff004c, #ff9900, #ff004c);
   text-align: center;
@@ -21,35 +28,23 @@ body {
   font-weight: 900;
   letter-spacing: 3px;
   animation: blink 1s infinite;
-  font-size: 18px;
-}
-
-.footer-banner {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  background: linear-gradient(90deg, #ff9900, #ff004c);
-  text-align: center;
-  padding: 10px;
-  font-size: 14px;
-  animation: blink 1.2s infinite;
+  font-size: 16px;
 }
 
 @keyframes blink {
-  0% { opacity: 1; }
+  0%,100% { opacity: 1; }
   50% { opacity: 0.6; }
-  100% { opacity: 1; }
 }
 
-/* ===== 잔액 ===== */
+/* 잔액 */
 .balance {
   text-align: center;
-  margin: 15px;
+  margin: 15px 0;
   font-size: 18px;
   font-weight: bold;
 }
 
-/* ===== 탭 ===== */
+/* 탭 */
 .tabs {
   display: flex;
 }
@@ -64,60 +59,79 @@ body {
   background: #ff004c;
 }
 
-/* ===== 화면 ===== */
+/* 화면 */
 .screen {
   display: none;
-  padding: 15px;
+  padding: 16px;
 }
 .screen.active {
   display: block;
 }
 
-/* ===== 버튼 ===== */
-.btn {
-  width: 100%;
-  padding: 14px;
-  margin-top: 12px;
-  background: #ff004c;
-  border: none;
-  font-size: 16px;
-  color: #fff;
-  border-radius: 6px;
-}
-
-/* ===== 칩 ===== */
-.chips {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-.chip {
-  flex: 1;
-  background: #111;
-  padding: 12px;
-  text-align: center;
-  border-radius: 30px;
-  border: 1px solid #ff004c;
-  cursor: pointer;
-  font-weight: bold;
-}
-
+/* 입력 */
 input {
   width: 100%;
-  padding: 12px;
-  margin-top: 10px;
+  padding: 14px;
+  margin: 12px 0;
   background: #111;
   color: #fff;
   border: 1px solid #333;
   border-radius: 6px;
+  font-size: 16px;
 }
 
-/* ===== 로그 ===== */
+/* 버튼 */
+.btn {
+  width: 100%;
+  padding: 16px;
+  margin-top: 16px;
+  background: #ff004c;
+  border: none;
+  font-size: 18px;
+  color: #fff;
+  border-radius: 8px;
+}
+
+/* 칩 */
+.chips {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 10px;
+}
+.chip {
+  background: #111;
+  padding: 14px;
+  text-align: center;
+  border-radius: 30px;
+  border: 1px solid #ff004c;
+  font-weight: bold;
+}
+
+/* 사다리 선택 */
+.ladder-pick {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-top: 10px;
+}
+.pick-btn {
+  padding: 14px 0;
+  background: #111;
+  border: 1px solid #555;
+  border-radius: 6px;
+  font-weight: bold;
+}
+.pick-btn.active {
+  background: #ff004c;
+}
+
+/* 로그 */
 .log {
-  margin: 15px;
+  margin: 16px;
   background: #111;
   padding: 10px;
-  max-height: 150px;
+  max-height: 160px;
   overflow-y: auto;
   font-size: 13px;
 }
@@ -126,7 +140,7 @@ input {
   color: #ccc;
 }
 
-/* ===== 팝업 ===== */
+/* 팝업 */
 .popup {
   position: fixed;
   inset: 0;
@@ -141,8 +155,7 @@ input {
   border: 2px solid #ff004c;
   padding: 25px;
   text-align: center;
-  width: 80%;
-  max-width: 300px;
+  width: 85%;
 }
 .popup-box h2 {
   color: #ff004c;
@@ -157,72 +170,61 @@ input {
 
 <body>
 
-<!-- 환영 팝업 -->
 <div class="popup" id="popup">
   <div class="popup-box">
     <h2>⚠ WELCOME ⚠</h2>
-    <p>
-      본 사이트는 18세 이상 전용입니다.<br>
-      모든 결과는 랜덤이며<br>
-      책임은 전적으로 본인에게 있습니다.
-    </p>
-    <button class="btn" onclick="closePopup()">입장하기</button>
+    <p>18세 이상 전용<br>모든 책임은 본인에게 있습니다</p>
+    <button class="btn" onclick="closePopup()">입장</button>
   </div>
 </div>
 
-<div class="header">🔥 BLACK CASINO – HIGH RISK HIGH RETURN 🔥</div>
+<div class="app">
+  <div class="header">🔥 BLACK CASINO 🔥</div>
 
-<div class="balance">보유 금액: <span id="money">10000</span> P</div>
+  <div class="balance">보유 금액: <span id="money">10000</span>P</div>
 
-<div class="tabs">
-  <div class="tab active" onclick="switchGame('oddEven', this)">홀짝</div>
-  <div class="tab" onclick="switchGame('ladder', this)">사다리</div>
-</div>
-
-<!-- 홀짝 -->
-<div id="oddEven" class="screen active">
-  <input id="betOE" type="number" placeholder="배팅 금액"/>
-  <div class="chips">
-    <div class="chip" onclick="addBet(100)">100</div>
-    <div class="chip" onclick="addBet(500)">500</div>
-    <div class="chip" onclick="addBet(1000)">1000</div>
-    <div class="chip" onclick="addBet(5000)">5000</div>
+  <div class="tabs">
+    <div class="tab active" onclick="switchGame('odd', this)">홀짝</div>
+    <div class="tab" onclick="switchGame('ladder', this)">사다리</div>
   </div>
-  <button class="btn" onclick="playOddEven()">PLAY</button>
-</div>
 
-<!-- 사다리 -->
-<div id="ladder" class="screen">
-  <input id="betL" type="number" placeholder="배팅 금액"/>
-  <input id="pickL" type="number" min="1" max="5" placeholder="번호 선택 (1~5)"/>
-  <div class="chips">
-    <div class="chip" onclick="addBet(100)">100</div>
-    <div class="chip" onclick="addBet(500)">500</div>
-    <div class="chip" onclick="addBet(1000)">1000</div>
-    <div class="chip" onclick="addBet(5000)">5000</div>
+  <!-- 홀짝 -->
+  <div id="odd" class="screen active">
+    <input id="betOE" type="number" placeholder="배팅 금액" />
+    <div class="chips">
+      <div class="chip" onclick="addBet(100)">100</div>
+      <div class="chip" onclick="addBet(500)">500</div>
+      <div class="chip" onclick="addBet(1000)">1000</div>
+      <div class="chip" onclick="addBet(5000)">5000</div>
+    </div>
+    <button class="btn" onclick="playOddEven()">PLAY</button>
   </div>
-  <button class="btn" onclick="playLadder()">PLAY</button>
+
+  <!-- 사다리 -->
+  <div id="ladder" class="screen">
+    <input id="betL" type="number" placeholder="배팅 금액" />
+    <div class="ladder-pick" id="ladderPick"></div>
+    <button class="btn" onclick="playLadder()">PLAY</button>
+  </div>
+
+  <div class="log" id="log"></div>
 </div>
-
-<div class="log" id="log"></div>
-
-<div class="footer-banner">🚨 1분 안에 인생 역전 가능 | ALL IN 환영 🚨</div>
 
 <script>
 let money = 10000;
+let ladderChoice = null;
 
 function closePopup() {
-  document.getElementById("popup").style.display = "none";
+  popup.style.display = "none";
 }
 
 function updateMoney(v) {
   money += v;
-  document.getElementById("money").innerText = money;
+  moneyEl.innerText = money;
 }
 
 function addLog(t) {
-  const l = document.getElementById("log");
-  l.innerHTML = `<div>${t}</div>` + l.innerHTML;
+  log.innerHTML = `<div>${t}</div>` + log.innerHTML;
 }
 
 function switchGame(id, el) {
@@ -240,25 +242,39 @@ function addBet(v) {
 function playOddEven() {
   const bet = Number(betOE.value);
   if (bet <= 0 || bet > money) return alert("배팅 금액 오류");
-
   const win = Math.random() < 0.5;
-  const result = win ? bet : -bet;
-  updateMoney(result);
-  addLog(`홀짝 ${win ? "승리" : "패배"} (${result}P)`);
+  const r = win ? bet * 2 : -bet;
+  updateMoney(r);
+  addLog(`홀짝 ${win ? "승리" : "패배"} (${r}P)`);
 }
 
 function playLadder() {
   const bet = Number(betL.value);
-  const pick = Number(pickL.value);
+  if (!ladderChoice) return alert("번호 선택");
   if (bet <= 0 || bet > money) return alert("배팅 금액 오류");
-  if (pick < 1 || pick > 5) return alert("번호 선택 오류");
 
-  const rank = Math.floor(Math.random() * 5) + 1;
-  const multi = [3,2,0,-1,-2][rank-1];
-  const result = bet * multi;
-  updateMoney(result);
-  addLog(`사다리 결과 ${rank}등 (${result}P)`);
+  const rank = Math.floor(Math.random() * 5);
+  const multi = [3,2,0,-1,-2][rank];
+  const r = bet * multi;
+  updateMoney(r);
+  addLog(`사다리 선택 ${ladderChoice} → ${rank+1}등 (${r}P)`);
 }
+
+// 사다리 버튼 생성
+for (let i = 1; i <= 5; i++) {
+  const b = document.createElement("button");
+  b.className = "pick-btn";
+  b.innerText = i;
+  b.onclick = () => {
+    ladderChoice = i;
+    document.querySelectorAll('.pick-btn').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+  };
+  ladderPick.appendChild(b);
+}
+
+const moneyEl = document.getElementById("money");
+const log = document.getElementById("log");
 </script>
 
 </body>
