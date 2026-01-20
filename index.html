@@ -16,139 +16,49 @@ body {
 }
 .app { width: 100%; max-width: 420px; }
 
-/* 팝업 */
-.popup-wrap {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.9);
-  display: flex; align-items: center; justify-content: center;
-  z-index: 9999;
-}
-.popup {
-  width: 90%; max-width: 360px;
-  border: 2px solid #ff004c;
-  padding: 28px 20px;
-  text-align: center;
-  background: linear-gradient(180deg, #111, #000);
-}
-.popup-title {
-  color: #ff004c; font-size: 20px; font-weight: 900;
-  margin-bottom: 14px;
-}
-.popup-text { font-size: 14px; color: #ccc; margin-bottom: 22px; }
-.popup button {
-  width: 100%; height: 52px;
-  background: #ff004c; border: none;
-  border-radius: 8px;
-  font-size: 16px; font-weight: 800;
-  color: #fff;
-}
+/* 로그 색상 */
+.log .win { color:#ffcc00; }
+.log .lose { color:#ff5555; }
+.log .draw { color:#aaa; }
 
-/* 헤더 */
-.header {
-  background: linear-gradient(270deg, #ff004c, #ff9900, #ff004c);
-  background-size: 600% 600%;
-  animation: grad 6s ease infinite;
-  text-align: center;
-  padding: 16px;
-  font-weight: 900;
-}
-@keyframes grad {
-  0%{background-position:0% 50%}
-  50%{background-position:100% 50%}
-  100%{background-position:0% 50%}
-}
+/* (이하 스타일은 기존 그대로) */
+.popup-wrap { position:fixed; inset:0; background:rgba(0,0,0,0.9); display:flex; align-items:center; justify-content:center; z-index:9999; }
+.popup { width:90%; max-width:360px; border:2px solid #ff004c; padding:28px 20px; text-align:center; background:linear-gradient(180deg,#111,#000); }
+.popup-title { color:#ff004c; font-size:20px; font-weight:900; margin-bottom:14px; }
+.popup-text { font-size:14px; color:#ccc; margin-bottom:22px; }
+.popup button { width:100%; height:52px; background:#ff004c; border:none; border-radius:8px; font-size:16px; font-weight:800; color:#fff; }
 
-.fake-win { text-align:center; font-size:13px; padding:8px; color:#ffcc00; }
-.balance { text-align:center; margin:14px 0; font-size:18px; font-weight:bold; }
+.header { background:linear-gradient(270deg,#ff004c,#ff9900,#ff004c); background-size:600% 600%; animation:grad 6s ease infinite; text-align:center; padding:16px; font-weight:900; }
+@keyframes grad { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
 
-.tabs { display:none; }
-.tab {
-  flex:1; text-align:center; padding:14px;
-  background:#111; font-weight:bold;
-}
-.tab.active { color:#ff004c; border-bottom:2px solid #ff004c; }
-
-.screen { display:none; padding:16px; }
-.screen.active { display:block; }
-
-input, button {
-  height:54px; font-size:16px; border-radius:8px;
-}
-input {
-  background:#111; color:#fff;
-  border:1px solid #333; padding:0 14px;
-}
-.btn {
-  margin-top:14px; width:100%;
-  background:#ff004c; border:none;
-  font-weight:800; color:#fff;
-}
-
-.bet-line { display:flex; gap:8px; }
-.bet-input { width:70%; }
-.max-btn {
-  width:30%; background:#111;
-  border:1px solid #ff004c;
-  color:#ff004c; font-weight:bold;
-}
-
-/* 홀짝 */
-.choice { display:flex; gap:12px; margin-top:14px; }
-.choice button {
-  flex:1; background:#111;
-  border:1px solid #ff004c; color:#fff;
-}
-.choice button.active { background:#ff004c; }
-
-/* 사다리 */
-.ladder-pick {
-  display:grid; grid-template-columns:repeat(5,1fr);
-  gap:10px; margin-top:14px;
-}
-.ladder-pick button {
-  background:#111; border:1px solid #555; color:#fff;
-}
-.ladder-pick button.active { background:#ff004c; }
-
-/* 슬롯 */
-.slots {
-  display:grid; grid-template-columns:repeat(5,1fr);
-  gap:8px; margin:16px 0;
-}
-.slot {
-  background:#111; border:2px solid #333;
-  height:64px; font-size:32px;
-  display:flex; align-items:center; justify-content:center;
-}
-.spinning { animation: spin 0.15s infinite linear; }
-@keyframes spin {
-  from { transform:translateY(-10px); }
-  to { transform:translateY(10px); }
-}
-
-.log {
-  margin:16px; background:#111;
-  padding:12px; max-height:180px;
-  overflow-y:auto; font-size:13px;
-}
-.log div { margin-bottom:6px; }
-
-.footer-banner {
-  position:fixed; bottom:0;
-  width:100%; max-width:420px;
-  background:#0d0d0d;
-  border-top:1px solid #222;
-  font-size:12px; color:#ff5555;
-}
-.footer-banner div {
-  white-space:nowrap;
-  padding:8px 12px;
-  animation:scroll 18s linear infinite;
-}
-@keyframes scroll {
-  from { transform:translateX(100%); }
-  to { transform:translateX(-100%); }
-}
+.fake-win{text-align:center;font-size:13px;padding:8px;color:#ffcc00;}
+.balance{text-align:center;margin:14px 0;font-size:18px;font-weight:bold;}
+.tabs{display:none;}
+.tab{flex:1;text-align:center;padding:14px;background:#111;font-weight:bold;}
+.tab.active{color:#ff004c;border-bottom:2px solid #ff004c;}
+.screen{display:none;padding:16px;}
+.screen.active{display:block;}
+input,button{height:54px;font-size:16px;border-radius:8px;}
+input{background:#111;color:#fff;border:1px solid #333;padding:0 14px;}
+.btn{margin-top:14px;width:100%;background:#ff004c;border:none;font-weight:800;color:#fff;}
+.bet-line{display:flex;gap:8px;}
+.bet-input{width:70%;}
+.max-btn{width:30%;background:#111;border:1px solid #ff004c;color:#ff004c;font-weight:bold;}
+.choice{display:flex;gap:12px;margin-top:14px;}
+.choice button{flex:1;background:#111;border:1px solid #ff004c;color:#fff;}
+.choice button.active{background:#ff004c;}
+.ladder-pick{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:14px;}
+.ladder-pick button{background:#111;border:1px solid #555;color:#fff;}
+.ladder-pick button.active{background:#ff004c;}
+.slots{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:16px 0;}
+.slot{background:#111;border:2px solid #333;height:64px;font-size:32px;display:flex;align-items:center;justify-content:center;}
+.spinning{animation:spin 0.15s infinite linear;}
+@keyframes spin{from{transform:translateY(-10px);}to{transform:translateY(10px);}}
+.log{margin:16px;background:#111;padding:12px;max-height:180px;overflow-y:auto;font-size:13px;}
+.log div{margin-bottom:6px;}
+.footer-banner{position:fixed;bottom:0;width:100%;max-width:420px;background:#0d0d0d;border-top:1px solid #222;font-size:12px;color:#ff5555;}
+.footer-banner div{white-space:nowrap;padding:8px 12px;animation:scroll 18s linear infinite;}
+@keyframes scroll{from{transform:translateX(100%);}to{transform:translateX(-100%);}}
 </style>
 </head>
 
@@ -180,7 +90,6 @@ input {
     <div class="tab" onclick="switchGame('slot', this)">슬롯</div>
   </div>
 
-  <!-- 홀짝 -->
   <div id="odd" class="screen">
     <div class="bet-line">
       <input id="betOE" class="bet-input" type="number" placeholder="배팅 금액">
@@ -193,7 +102,6 @@ input {
     <button class="btn" onclick="playOdd(this)">PLAY</button>
   </div>
 
-  <!-- 사다리 -->
   <div id="ladder" class="screen">
     <div class="bet-line">
       <input id="betL" class="bet-input" type="number" placeholder="배팅 금액">
@@ -203,7 +111,6 @@ input {
     <button class="btn" onclick="playLadder(this)">PLAY</button>
   </div>
 
-  <!-- 슬롯 -->
   <div id="slot" class="screen">
     <div class="bet-line">
       <input id="betS" class="bet-input" type="number" placeholder="배팅 금액">
@@ -216,172 +123,136 @@ input {
   <div class="log" id="log"></div>
 </div>
 
-<div class="footer-banner">
-  <div>⚠ 시스템 판정 결과에 이의 제기 불가 · 미적중 책임 없음</div>
-</div>
-
 <script>
 let money = 0, oeChoice = null, ladderChoice = null;
 const cooldown = { odd:false, ladder:false, slot:false };
-
 const symbols = ['🍒','🍋','🔔','💎'];
 const names = ['김**','이**','박**','최**','정**'];
 
 const moneyEl = document.getElementById("money");
 const log = document.getElementById("log");
-const fakeWin = document.getElementById("fakeWin");
 
-function enter() {
-  document.getElementById("popup").remove();
-}
-
-function setMoney() {
+function enter(){ document.getElementById("popup").remove(); }
+function setMoney(){
   const v = Number(startMoney.value);
-  if (v <= 0) return alert("금액 입력");
-  money = v;
-  moneyEl.innerText = money;
-  setup.style.display = "none";
-  document.querySelector(".tabs").style.display = "flex";
+  if(v<=0) return alert("금액 입력");
+  money=v; moneyEl.innerText=money;
+  setup.style.display="none";
+  document.querySelector(".tabs").style.display="flex";
   odd.classList.add("active");
 }
-
-function switchGame(id, el) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+function switchGame(id,el){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
 }
+function startCooldown(type,btn){
+  cooldown[type]=true; btn.disabled=true;
+  let t=5, o=btn.innerText;
+  btn.innerText=`WAIT ${t}s`;
+  const timer=setInterval(()=>{
+    t--;
+    if(t>0) btn.innerText=`WAIT ${t}s`;
+    else{ clearInterval(timer); cooldown[type]=false; btn.disabled=false; btn.innerText=o; }
+  },1000);
+}
 
-/* 쿨타임 */
-function startCooldown(type, btn) {
-  cooldown[type] = true;
-  btn.disabled = true;
-  let time = 5;
-  const origin = btn.innerText;
-  btn.innerText = `WAIT ${time}s`;
-
-  const timer = setInterval(() => {
-    time--;
-    if (time > 0) btn.innerText = `WAIT ${time}s`;
-    else {
-      clearInterval(timer);
-      cooldown[type] = false;
-      btn.disabled = false;
-      btn.innerText = origin;
-    }
-  }, 1000);
+/* 로그 함수 (형식 + 색상) */
+function addLog(game, result, multi, before, after){
+  let cls = after > before ? "win" : after < before ? "lose" : "draw";
+  log.innerHTML =
+    `<div class="${cls}">
+      ${game} | ${result} | x${multi} | ${before}P → ${after}P
+     </div>` + log.innerHTML;
 }
 
 /* 홀짝 */
-function pickOE(v, el) {
-  oeChoice = v;
-  document.querySelectorAll('.choice button').forEach(b => b.classList.remove('active'));
+function pickOE(v,el){
+  oeChoice=v;
+  document.querySelectorAll('.choice button').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
 }
-function playOdd(btn) {
-  if (cooldown.odd) return;
-  const bet = Number(betOE.value);
-  if (!oeChoice || bet <= 0 || bet > money) return alert("배팅 오류");
-  startCooldown("odd", btn);
-  const ans = Math.random() < 0.5 ? '홀' : '짝';
-  money += (oeChoice === ans) ? bet : -bet;
-  moneyEl.innerText = money;
-  addLog(`홀짝 ${ans}`);
+function playOdd(btn){
+  if(cooldown.odd) return;
+  const bet=Number(betOE.value);
+  if(!oeChoice||bet<=0||bet>money) return alert("배팅 오류");
+  const before=money;
+  startCooldown("odd",btn);
+  const ans=Math.random()<0.5?'홀':'짝';
+  const multi = oeChoice===ans ? 1 : -1;
+  money += bet * multi;
+  moneyEl.innerText=money;
+  addLog("홀짝", ans, multi, before, money);
 }
 
-/* 사다리 버튼 생성 */
-for (let i = 1; i <= 5; i++) {
-  const b = document.createElement("button");
-  b.innerText = i;
-  b.onclick = () => {
-    ladderChoice = i;
-    document.querySelectorAll('.ladder-pick button').forEach(x => x.classList.remove('active'));
+/* 사다리 */
+for(let i=1;i<=5;i++){
+  const b=document.createElement("button");
+  b.innerText=i;
+  b.onclick=()=>{
+    ladderChoice=i;
+    document.querySelectorAll('.ladder-pick button').forEach(x=>x.classList.remove('active'));
     b.classList.add('active');
   };
   ladderPick.appendChild(b);
 }
-
-/* 사다리 확률 (수정됨) */
-function getLadderRank() {
-  const r = Math.random() * 100;
-  if (r < 3) return 1;
-  if (r < 15) return 2;
-  if (r < 35) return 3;
-  if (r < 60) return 4;
+function getLadderRank(){
+  const r=Math.random()*100;
+  if(r<3) return 1;
+  if(r<15) return 2;
+  if(r<35) return 3;
+  if(r<60) return 4;
   return 5;
 }
-
-function playLadder(btn) {
-  if (cooldown.ladder) return;
-  const bet = Number(betL.value);
-  if (!ladderChoice || bet <= 0 || bet > money) return alert("배팅 오류");
-  startCooldown("ladder", btn);
-  const rank = getLadderRank();
-  const multi = {1:4,2:2,3:1,4:0,5:-1}[rank];
-  const diff = bet * multi;
-  money += diff;
-  moneyEl.innerText = money;
-  addLog(`사다리 ${rank}등 → x${multi}`);
+function playLadder(btn){
+  if(cooldown.ladder) return;
+  const bet=Number(betL.value);
+  if(!ladderChoice||bet<=0||bet>money) return alert("배팅 오류");
+  const before=money;
+  startCooldown("ladder",btn);
+  const rank=getLadderRank();
+  const multi={1:4,2:2,3:1,4:0,5:-1}[rank];
+  money += bet * multi;
+  moneyEl.innerText=money;
+  addLog("사다리", `${rank}등`, multi, before, money);
 }
 
-/* 슬롯 생성 */
-for (let i = 0; i < 5; i++) {
-  const d = document.createElement("div");
-  d.className = "slot";
-  d.innerText = "❔";
-  slots.appendChild(d);
+/* 슬롯 */
+for(let i=0;i<5;i++){
+  const d=document.createElement("div");
+  d.className="slot"; d.innerText="❔"; slots.appendChild(d);
 }
-
-function playSlot(btn) {
-  if (cooldown.slot) return;
-  const bet = Number(betS.value);
-  if (bet <= 0 || bet > money) return alert("배팅 오류");
-  startCooldown("slot", btn);
-
-  const slotEls = document.querySelectorAll('.slot');
-  slotEls.forEach(s => s.classList.add("spinning"));
-
-  let c = 0;
-  const spin = setInterval(() => {
-    slotEls.forEach(s => {
-      s.innerText = symbols[Math.floor(Math.random() * symbols.length)];
-    });
-    if (++c > 12) {
+function playSlot(btn){
+  if(cooldown.slot) return;
+  const bet=Number(betS.value);
+  if(bet<=0||bet>money) return alert("배팅 오류");
+  const before=money;
+  startCooldown("slot",btn);
+  const els=document.querySelectorAll('.slot');
+  els.forEach(s=>s.classList.add("spinning"));
+  let c=0;
+  const spin=setInterval(()=>{
+    els.forEach(s=>s.innerText=symbols[Math.floor(Math.random()*symbols.length)]);
+    if(++c>12){
       clearInterval(spin);
-      slotEls.forEach(s => s.classList.remove("spinning"));
-      settleSlot(bet);
+      els.forEach(s=>s.classList.remove("spinning"));
+      settleSlot(bet, before);
     }
-  }, 80);
+  },80);
 }
-
-/* 슬롯 배율 (수정됨) */
-function settleSlot(bet) {
-  const result = [...document.querySelectorAll('.slot')].map(s => s.innerText);
-  const cnt = {};
-  result.forEach(x => cnt[x] = (cnt[x] || 0) + 1);
-  const max = Math.max(...Object.values(cnt));
-
-  let multi = -2;
-  if (max === 5) multi = 30;
-  else if (max === 4) multi = 4;
-  else if (max === 3) multi = 1;
-
-  const diff = bet * multi;
-  money += diff;
-  moneyEl.innerText = money;
-  addLog(`슬롯 ${max}개 동일 → x${multi}`);
+function settleSlot(bet,before){
+  const r=[...document.querySelectorAll('.slot')].map(s=>s.innerText);
+  const cnt={}; r.forEach(x=>cnt[x]=(cnt[x]||0)+1);
+  const max=Math.max(...Object.values(cnt));
+  let multi=-2;
+  if(max===5) multi=30;
+  else if(max===4) multi=4;
+  else if(max===3) multi=1;
+  money += bet * multi;
+  moneyEl.innerText=money;
+  addLog("슬롯", `${max}개 동일`, multi, before, money);
 }
-
-function addLog(t) {
-  log.innerHTML = `<div>${t}</div>` + log.innerHTML;
-}
-
-/* 가짜 당첨 */
-setInterval(() => {
-  const name = names[Math.floor(Math.random() * names.length)];
-  const amt = (Math.floor(Math.random() * 40) + 10) * 1000;
-  fakeWin.innerText = `${name}님이 ${amt}P 획득`;
-}, 7000);
 </script>
 
 </body>
