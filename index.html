@@ -292,7 +292,7 @@ function playLadder() {
   const bet = Number(betL.value);
   if (!ladderChoice || bet <= 0 || bet > money) return alert("배팅 오류");
   const rank = getLadderRank();
-  const multi = {1:8,2:4,3:2,4:0,5:-2}[rank];
+  const multi = {1:8,2:4,3:2,4:0,5:-1}[rank];
   const diff = bet * multi;
   money += diff;
   moneyEl.innerText = money;
