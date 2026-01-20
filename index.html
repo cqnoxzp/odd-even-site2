@@ -1,51 +1,31 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>BLACK CASINO</title>
-
-<style>
-/* === CSS 전부 동일 (생략 없이 유지) === */
-body {
-  margin: 0;
-  background: #0b0b0b;
-  color: #fff;
-  font-family: Pretendard, system-ui, sans-serif;
-  display: flex;
-  justify-content: center;
-}
-.app { width: 100%; max-width: 420px; }
-/* 이하 CSS 동일 */
-</style>
-</head>
-
-<body>
-
-<!-- HTML 구조 전부 동일 -->
-
 <script>
-let money = 0, oeChoice = null, ladderChoice = null;
-const cooldown = { odd:false, ladder:false, slot:false };
+/* =====================
+   쿨타임 상태
+===================== */
+const cooldown = {
+  odd: false,
+  ladder: false,
+  slot: false
+};
 
-const symbols = ['🍒','🍋','🔔','💎'];
-const names = ['김**','이**','박**','최**','정**'];
-
-const moneyEl = document.getElementById("money");
-const log = document.getElementById("log");
-const fakeWin = document.getElementById("fakeWin");
-
-/* ===== 쿨타임 ===== */
+/* =====================
+   공통 쿨타임 함수 (5초 카운트다운)
+===================== */
 function startCooldown(type, btn) {
+  if (!btn) return;
+
   cooldown[type] = true;
   btn.disabled = true;
+
   let time = 5;
   const originText = btn.innerText;
   btn.innerText = `WAIT ${time}s`;
+
   const timer = setInterval(() => {
     time--;
-    if (time > 0) btn.innerText = `WAIT ${time}s`;
-    else {
+    if (time > 0) {
+      btn.innerText = `WAIT ${time}s`;
+    } else {
       clearInterval(timer);
       cooldown[type] = false;
       btn.disabled = false;
@@ -54,88 +34,77 @@ function startCooldown(type, btn) {
   }, 1000);
 }
 
-/* ===== 홀짝 (변경 없음) ===== */
+/* =====================
+   홀짝
+===================== */
 function playOdd(btn) {
   if (cooldown.odd) return;
-  const bet = Number(betOE.value);
-  if (!oeChoice || bet <= 0 || bet > money) return alert("배팅 오류");
-  startCooldown("odd", btn);
-  const ans = Math.random() < 0.5 ? '홀' : '짝';
-  const win = oeChoice === ans;
-  money += win ? bet : -bet;
-  moneyEl.innerText = money;
-  addLog(`홀짝 ${ans} → ${win ? '+' : '-'}${bet}P`);
+
+  startCooldown('odd', btn);
+
+  // 기존 로직 그대로 쓰면 됨
+  // ↓↓↓ 예시 ↓↓↓
+  const win = Math.random() < 0.5;
+  const bet = Number(document.getElementById('bet').value);
+
+  if (win) {
+    point += bet;
+  } else {
+    point -= bet;
+  }
+
+  updatePoint();
 }
 
-/* ===== 사다리 (확률/배율 변경) ===== */
-function getLadderRank() {
-  const r = Math.random() * 100;
-  if (r < 3) return 1;        // 3%
-  if (r < 15) return 2;       // +12%
-  if (r < 35) return 3;       // +20%
-  if (r < 60) return 4;       // +25%
-  return 5;                   // 40%
-}
-
+/* =====================
+   사다리 (확률/배율 네가 준 값)
+===================== */
 function playLadder(btn) {
   if (cooldown.ladder) return;
-  const bet = Number(betL.value);
-  if (!ladderChoice || bet <= 0 || bet > money) return alert("배팅 오류");
-  startCooldown("ladder", btn);
 
-  const rank = getLadderRank();
-  const multi = {1:4, 2:2, 3:1, 4:0, 5:-1}[rank];
-  const diff = bet * multi;
+  startCooldown('ladder', btn);
 
-  money += diff;
-  moneyEl.innerText = money;
-  addLog(`사다리 ${rank}등 → x${multi} (${diff >= 0 ? '+' : ''}${diff}P)`);
+  const bet = Number(document.getElementById('bet').value);
+  const r = Math.random() * 100;
+
+  let multi = 0;
+
+  if (r < 3) multi = 4;            // 1등 3%
+  else if (r < 15) multi = 2;      // 2등 12%
+  else if (r < 35) multi = 1;      // 3등 20%
+  else if (r < 60) multi = 0;      // 4등 25%
+  else multi = -1;                 // 5등 40%
+
+  point += bet * multi;
+  updatePoint();
 }
 
-/* ===== 슬롯 (배율 변경) ===== */
+/* =====================
+   슬롯머신 (확률/배율 네가 준 값)
+===================== */
 function playSlot(btn) {
   if (cooldown.slot) return;
-  const bet = Number(betS.value);
-  if (bet <= 0 || bet > money) return alert("배팅 오류");
-  startCooldown("slot", btn);
 
-  const slotEls = document.querySelectorAll('.slot');
-  slotEls.forEach(s => s.classList.add("spinning"));
+  startCooldown('slot', btn);
 
-  let c = 0;
-  const spin = setInterval(() => {
-    slotEls.forEach(s => {
-      s.innerText = symbols[Math.floor(Math.random() * symbols.length)];
-    });
-    if (++c > 12) {
-      clearInterval(spin);
-      slotEls.forEach(s => s.classList.remove("spinning"));
-      settleSlot(bet);
-    }
-  }, 80);
+  const bet = Number(document.getElementById('bet').value);
+  const r = Math.random() * 100;
+
+  let multi = 0;
+
+  if (r < 0.39) multi = 30;         // 5개 동일
+  else if (r < 6.25) multi = 4;     // 4개 동일
+  else if (r < 41.41) multi = 1;    // 3개 동일
+  else multi = -2;                  // 2개 동일
+
+  point += bet * multi;
+  updatePoint();
 }
 
-function settleSlot(bet) {
-  const result = [...document.querySelectorAll('.slot')].map(s => s.innerText);
-  const cnt = {};
-  result.forEach(x => cnt[x] = (cnt[x] || 0) + 1);
-  const max = Math.max(...Object.values(cnt));
-
-  let multi = -2;
-  if (max === 5) multi = 30;
-  else if (max === 4) multi = 4;
-  else if (max === 3) multi = 1;
-
-  const diff = bet * multi;
-  money += diff;
-  moneyEl.innerText = money;
-  addLog(`슬롯 ${max}개 동일 → x${multi} (${diff >= 0 ? '+' : ''}${diff}P)`);
-}
-
-function addLog(t) {
-  log.innerHTML = `<div>${t}</div>` + log.innerHTML;
+/* =====================
+   포인트 UI 업데이트
+===================== */
+function updatePoint() {
+  document.getElementById('point').innerText = point;
 }
 </script>
-
-</body>
-</html>
